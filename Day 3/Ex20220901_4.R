@@ -69,5 +69,22 @@ round(x)          # 반올림
 
 # 행렬연산 관련
 
-cbind(x, y)       # 열 기준으로 병합
-rbind(x, y)       # 행 기준으로 병합
+x <- matrix(1:9, nrow = 3, ncol = 3, byrow = T)
+y <- matrix(4:12, nrow = 3, ncol = 3)
+
+cbind(x, y)       # 열 기준으로 병합 (xy)
+rbind(x, y)       # 행 기준으로 병합 (x)
+                  #                  (y)
+ncol(x)           # 열 개수
+nrow(x)           # 행 개수
+apply(x, 1, sum)  # 행렬, 1은 행 기준, 2는 열 기준으로 함수 적용
+t(x)              # 전치행렬 -> 행 기준은 열 기준으로, 열 기준은 행 기준으로
+diag(x)           # 대각행렬 -> 대각선 (\) 방향에 있는 요소로 이루어진 행렬
+
+
+# 집합연산 관련
+
+union(x, y)       # 합집합 ( 중복 없음 )
+intersect(x, y)   # 교집합
+setdiff(x, y)     # 차집합
+3%in%y            # 3이 y의 요소 인지 검사 => F
