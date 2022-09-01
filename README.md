@@ -10,4 +10,4 @@
 #### 22/09/01
     Day 3_1 - 숙제 검토 ( 인구 이동 통계에서 시, 군의 순이동이 양수 인 데이터만 추출 )
             ( 실습 파일 > https://github.com/XIUMAMU/R_Practice/blob/main/Day%203/Practice/Move_July.csv )
-         _2 - 
+         _2 - 연산자 ( 산술/관계/논리 연산자 ) 와 조건문 ( if/else if/ifelse/switch/which )
