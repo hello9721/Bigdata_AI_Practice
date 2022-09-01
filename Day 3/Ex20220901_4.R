@@ -74,7 +74,7 @@ y <- matrix(4:12, nrow = 3, ncol = 3)
 
 cbind(x, y)       # 열 기준으로 병합 (xy)
 rbind(x, y)       # 행 기준으로 병합 (x)
-                  #                  (y)
+                  #                 (y)
 ncol(x)           # 열 개수
 nrow(x)           # 행 개수
 apply(x, 1, sum)  # 행렬, 1은 행 기준, 2는 열 기준으로 함수 적용
