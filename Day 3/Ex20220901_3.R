@@ -82,13 +82,14 @@ test
 # 분산과 표준편차의 값이 작다 == 변량들이 중심으로 모여있다.
 
 var_sd <- function(x){
-  var <- sum(x - mean(x)^2) / (length(x)-1)
+  var <- sum((x - mean(x))^2) / (length(x)-1)
                         # x - mean(x) : 각각 편차를 구함 == 시그마
   sd <- sqrt(var)       # sqrt() : 분산에 루트 == 표준편차
   cat("표본 분산       ", var,"\n")
   cat("표본 표준편차   ", sd)
 }
 
+sd(test)                # 표준편차 구하는 함수로 검증
 var_sd(test)
 
 
