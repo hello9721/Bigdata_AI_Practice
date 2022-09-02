@@ -22,7 +22,7 @@ str(chart_data)                                 # 자료구조 확인
 barplot(chart_data)                             # 세로막대그래프
 barplot(chart_data, ylim = c(0, 1000))          # ylim = c(최소, 최대) -> 세로축 범위 설정
 barplot(chart_data, col = rainbow(8))           # col = 색상 -> rainbow(n)은 n가지의 무지개색으로 설정
-barplot(chart_data, main = "년도별 현황 비교")   # main = 제목 -> 차트 제목 지정
+barplot(chart_data, main = "년도별 현황 비교")  # main = 제목 -> 차트 제목 지정
 barplot(chart_data, ylab = "단위: 만원", xlab = "년도별 현황")
                                                 # ylab = 세로축 제목, xlab = 가로축 제목
 
@@ -88,23 +88,3 @@ names(chart_data) <- c("2011년", "2012년", "2013년", "2014년", "2015년","20
 pie(chart_data)                                 # 원형차트그래프
 
 pie(chart_data, col = rainbow(9), cex = 0.8, labels = names(chart_data), main = "분기별 매출 현황")
-
-
-# 2 연속변수의 시각화
-
-
-# 상자 그래프
-# 데이터의 분포를 나타내는데 많이 사용.
-# summary 함수의 내용을 시각화 한다고 생각하면 된다.
-
-data(VADeaths)                                  # 샘플 데이터 가져오기
-VADeaths
-
-boxplot(VADeaths)                               # 상자그래프
-
-boxplot(VADeaths, range = 0)                    # range = 0 은 최소값과 최대값을 점선으로 연결
-                                                # 0이 디폴트
-abline(h = 37, lty = 3, col = "green")          # 37 높이에 초록색으로 하여 스타일 3의 기준선을 그린다.
-
-
-# 히스토그램
