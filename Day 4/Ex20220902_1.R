@@ -22,7 +22,7 @@ str(chart_data)                                 # 자료구조 확인
 barplot(chart_data)                             # 세로막대그래프
 barplot(chart_data, ylim = c(0, 1000))          # ylim = c(최소, 최대) -> 세로축 범위 설정
 barplot(chart_data, col = rainbow(8))           # col = 색상 -> rainbow(n)은 n가지의 무지개색으로 설정
-barplot(chart_data, main = "년도별 현황 비교")  # main = 제목 -> 차트 제목 지정
+barplot(chart_data, main = "년도별 현황 비교")   # main = 제목 -> 차트 제목 지정
 barplot(chart_data, ylab = "단위: 만원", xlab = "년도별 현황")
                                                 # ylab = 세로축 제목, xlab = 가로축 제목
 
