@@ -49,14 +49,40 @@ par(mfrow = c(1,2))
 hist(iris$Petal.Length,freq = F, col = rainbow(30), ylim = c(0,1.2), main = "꽃잎 길이 확률 밀도")
 lines(density(iris$Petal.Length))
                                               # 정규분포 추정곡선 추가하기
-x <- seq(1, 7, 70)                            # seq(시작,끝,개수) -> 시작과 끝 범위 안에서 개수만큼의 원소를 반환
+x <- seq(1, 7, 0.01)                          # seq(시작,끝,간격) -> 시작부터 끝 범위까지 간격만큼의 모든 원소를 반환
 curve(dnorm( x, mean = mean(iris$Petal.Length), sd = sd(iris$Petal.Length)), col = "blue", add = T)
 
 hist(iris$Petal.Width, freq = F, col = rainbow(30), ylim = c(0,1.2), xlim = c(0, 3), main = "꽃잎 너비 확률 밀도")
 lines(density(iris$Petal.Width))
 
-x <- seq(0, 3, 30)                            # x에 적용할 그래프의 범위 까지의 일정 변량이 담길 수 있도록 해주고
+x <- seq(0, 3, 0.01)                          # x에 적용할 그래프의 범위 까지의 일정 변량이 담길 수 있도록 해주고
 curve(dnorm( x, mean = mean(iris$Petal.Width), sd = sd(iris$Petal.Width)), col = "blue", add = T)
-                                              # curve 함수안의 정규분포 난수 생성함수를 사용
+                                              # 정규분포 난수 생성함수를 사용하여 얻은 난수를 curve 함수를 통해 선으로.
                                               # (평균과 표준편차는 그래프 데이터의 평균과 표준편차 사용)
                                               # curve 함수 add 속성을 이용해 해당 그래프에 추가 표시해준다.
+
+x <- quakes$mag
+hist(x, ylim = c(0, 120), breaks = seq(4.0, 6.5, 0.1))
+                                              # break = seq(시작, 끝, 간격) -> seq를 통해 나온 수 들을 x 지표로 사용.
+
+
+# 산점도 그래프
+
+x <- runif(100, min = 0, max = 100)           # 난수 발생 함수를 통해 샘플데이터 받기
+plot(x, col = "blue")                         # 산점도 그래프
+
+par(new = T)                                  # 차트 추가
+line_chart <- c(1:100)                        # 산점도 그래프의 대각선을 추가하기 위한 데이터
+plot(line_chart, type = "l", ann = F, axes = F)
+                                              # type = "l" -> 실선으로,
+                                              # ann, axes = F -> 레이블이나 지표 표시 F
+text(70, 80, "대각선 추가", col = "red")      # 해당 좌표에 해당 텍스트 표시
+
+par(mfrow = c(2,2))
+
+plot(x, type = "l")                           # 실선으로 표시
+plot(x, type = "o")                           # 실선으로 표시, 지점마다 o 표시
+plot(x, type = "h")                           # 수직선으로 표시
+plot(x, type = "s")                           # 꺽은선으로 표시
+
+plot(x, type = "o", pch = 5)                  # pch -> 지점 도형을 최대 30가지로 바꿈
