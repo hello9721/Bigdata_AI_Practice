@@ -67,3 +67,95 @@ summarise(hf, sdAirTime = sd(AirTime, na.rm = T), varAirTime = var(AirTime, na.r
 species <- group_by(iris, Species)
                                   # 종을 기준으로 그룹화
 str(species)
+
+# inner_join(df1, df2, by = 'x')
+# 1,2 모두 x열이 존재하는 관측치만 병합
+
+df1 <- data.frame(x = 1:100, y = rnorm(100))
+df2 <- data.frame(x = 51:60, z = rnorm(10))
+
+inner_join(df1, df2, by = 'x')
+inner_join(df2, df1, by = 'x')
+                                  # 기준이 되는 x열이 1열, 왼쪽 df의 열이 2열, 오른쪽 df의 열이 3열
+                                  # x열 중 공통적이지 않은 행은 버린다.
+
+# left_join(df1, df2, by = 'x')
+# 왼쪽 데이터의 x열 기준으로 병합
+
+left_join(df1, df2, by = 'x')
+left_join(df2, df1, by = 'x')
+                                  # 왼쪽 df에 오른쪽 df가 합쳐진다.
+                                  # 왼쪽 df 열, 오른쪽 df 열 순서로 병합.
+                                  # 합쳐진 열 중 공통적이지 않은 행의 없는 값들은 결측치, NA로 기록된다.
+                                  # 왼쪽 df 행 수보다 오른쪽 df 행의 수가 더 많으면 넘치는 행들은 버린다.
+
+# right_join(df1, df2, by = 'x')
+# 오른쪽 데이터의 x열 기준으로 병합
+
+right_join(df1, df2, by = 'x')
+right_join(df2, df1, by = 'x')
+                                  # 오른쪽 df에 왼쪽 df가 합쳐진다.
+                                  # 오른쪽 df 열, 왼쪽 df 열 순서로 병합.
+                                  # 합쳐진 열 중 공통적이지 않은 행의 없는 값들은 결측치, NA로 기록된다.
+                                  # 오른쪽 df 행 수보다 왼쪽 df 행의 수가 더 많으면 넘치는 행들은 버린다.
+
+# full_join(df1, df2, by = 'x')
+# 1,2 중에서 x열이 있으면 모두 병합
+
+full_join(df1, df2, by = 'x')
+full_join(df2, df1, by = 'x')
+                                  # 모든 df의 데이터를 병합.
+                                  # 왼쪽 df 열, 오른쪽 df 열 순서로 병합.
+                                  # 합쳐진 열 중 공통적이지 않은 행의 없는 값들은 결측치, NA로 기록된다.
+
+# bind_rows(df1, df2)
+# 데이터프레임들을 행 기준으로 합친다.
+
+df1 <- data.frame(x = 1:5, y = rnorm(5))
+df2 <- data.frame(x = 6:10, z = rnorm(5))
+
+bind_rows(df1, df2)               #  공통적인 열은 df1 / 없는 열의 행은 결측치로 기록.
+                                  #                df2                  df2
+
+
+# bind_cols(df1, df2)
+# 데이터프레임들을 열 기준으로 합친다.
+
+bind_cols(df1, df2)               #  공통적인 열은 자동으로 열 이름이 바뀌어서 df1 df2 순서로 합쳐진다.
+
+# rename(df1, x1_re = x1)
+# 데이터 프레임의 특정 열의 이름을 새로 짓는다.
+
+rename(df1, z = y) %>% bind_rows(df2)
+
+
+
+# 숙제
+# iris에서의 3품종을 각각 df1, df2, df3에 저장한 후,
+# df_all 라는 이름으로 행단위 병합하기 (virg -> vers -> set 순서로)
+
+# 1
+
+summary(iris)
+
+t_iris <- tbl_df(iris)
+
+df1 <- filter(t_iris, Species == "virginica")
+df2 <- filter(t_iris, Species == "versicolor")
+df3 <- filter(t_iris, Species == "setosa")
+
+df_all<- bind_rows(df1, df2) %>% bind_rows(df3)
+
+head(df_all)
+tail(df_all)
+
+# 2
+
+df1 <- iris[iris$Species == "virginica", ]
+df2 <- iris[iris$Species == "versicolor", ]
+df3 <- iris[iris$Species == "setosa", ]
+
+df_all <- rbind(df1, df2) %>% rbind(df3)
+
+head(df_all)
+tail(df_all)
