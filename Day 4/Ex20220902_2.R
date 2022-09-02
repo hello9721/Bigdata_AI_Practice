@@ -78,11 +78,71 @@ plot(line_chart, type = "l", ann = F, axes = F)
                                               # ann, axes = F -> 레이블이나 지표 표시 F
 text(70, 80, "대각선 추가", col = "red")      # 해당 좌표에 해당 텍스트 표시
 
-par(mfrow = c(2,2))
+par(mfrow = c(2, 2))
 
-plot(x, type = "l")                           # 실선으로 표시
-plot(x, type = "o")                           # 실선으로 표시, 지점마다 o 표시
-plot(x, type = "h")                           # 수직선으로 표시
-plot(x, type = "s")                           # 꺽은선으로 표시
+plot(x, type = "l", col = "red")              # 실선으로 표시
+plot(x, type = "o", col = "orange")           # 실선으로 표시, 지점마다 o 표시
+plot(x, type = "h", col = "blue")             # 수직선으로 표시
+plot(x, type = "s", col = "purple")           # 꺽은선으로 표시
 
 plot(x, type = "o", pch = 5)                  # pch -> 지점 도형을 최대 30가지로 바꿈
+plot(x, type = "o", col = "orange", pch = 20, lwd = 2)
+                                              # lwd -> 선 굵기
+plot(quakes$mag, type = "s")
+
+
+# 중첩 자료 그래프
+# 2차원 산점도 그래프에서 중복 데이터가 있을때.
+
+x <- c(1, 2, 3, 4, 2)
+y <- rep(2, 5)
+
+table(x,y)
+plot(x, y)                                    # 결과 -> (2, 2)가 2번 나오기때문에 중첩되서 점 4개만 나옴
+
+xy <- as.data.frame(table(x,y))               # 중복 없는 x의 데이터가 x 열, y는 y 열, 중복 갯수가 Freq 열
+xy
+
+plot( x, y, col = rainbow(10), cex = 2 * xy$Freq)
+                                              # xy$Freq, 즉, 중복되는 원소일수록 더 확대되도록.
+                                              # 그래프에서 중복되는 값을 알아보기 쉽다.
+library(UsingR)
+data(galton)                                  # 샘플 데이터 가져오기
+
+str(galton)
+summary(galton)
+
+galtonData <- as.data.frame(table(galton$child, galton$parent))
+                                              # 교차 테이블로 만들기 -> 중복되는 수는 Freq로 나온다.
+galtonData
+
+child <- as.numeric(galtonData$Var1)
+parent <- as.numeric(galtonData$Var2)
+
+plot(child, parent, col = rainbow(1000), cex = 0.2 * galtonData$Freq)
+                                              # 중복되는 수가 많은 데이터 일수록 더 크게 확대되어 잘 보이게 된다.
+
+
+# 변수 간 비교 그래프
+# 변수와 변수 사이의 관계를 시각화
+
+iris                                          # 샘플 데이터 가져오기
+
+virginica <- iris[ iris$Species == "virginica", 1:4 ]      
+setosa <- iris[ iris$Species == "setosa", 1:4 ]
+versicolor <- iris[ iris$Species == "versicolor", 1:4 ]
+                                              # Species가 virginica인 변수만 1열부터 4열까지 출력
+pairs(virginica)                              # 각 열이 서로 어떠한 관계인지 시각화
+pairs(setosa)
+pairs(versicolor)
+
+# 3차원 산점도 그래프
+
+library(scatterplot3d)
+
+d3 <- scatterplot3d(iris$Petal.Length, iris$Sepal.Length, iris$Sepal.Width, type = 'n')
+                                              # 뼈대 생성 -> type ='n' 을 사용하면 산점도 표시 하지 않고 뼈대만 생성 가능
+d3$points3d(virginica$Petal.Length, virginica$Sepal.Length, virginica$Sepal.Width, bg = "orange", pch = 21)
+d3$points3d(setosa$Petal.Length, setosa$Sepal.Length, setosa$Sepal.Width, bg = "green", pch = 23)
+d3$points3d(versicolor$Petal.Length, versicolor$Sepal.Length, versicolor$Sepal.Width, bg = "purple", pch = 25)
+                                              # 각자 모양, 색을 다르게 해서 구별이 가도록 한다.
