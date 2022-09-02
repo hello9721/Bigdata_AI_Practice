@@ -43,9 +43,68 @@ dim(VADeaths)
 
 par(mfrow = c(1,2))                             # 1행에 2개의 그래프를 볼 수 있도록 한다.
 
-barplot(VADeaths, beside = T, col = rainbow(5)) # 옆으로 나뉜다. (개별 차트)
+barplot(VADeaths, beside = T, col = rainbow(5)) # 옆으로 나뉜다. (개별 차트) beside = T
 legend(19, 71, c("50", "55", "60", "65", "70"), fill = rainbow(5))
-barplot(VADeaths, beside = F, col = rainbow(5)) # 한줄로 쌓인다. (누적 차트)
+barplot(VADeaths, beside = F, col = rainbow(5)) # 한줄로 쌓인다. (누적 차트) beside = F
 legend(3.8, 200, c("50", "55", "60", "65", "70"), fill = rainbow(5))
                                                 # legend는 범례를 표시해주는 함수
-                                                # x좌표, y좌표, 문자열로 이루어진 범례명들, 색구분
+                                                # x좌표, y좌표, 문자열로 이루어진 범례명, 색구분
+
+par(mfrow = c(1,2))                             # 1행에 2개의 그래프를 볼 수 있도록 한다.
+
+barplot(VADeaths, beside = T, col = rainbow(5), ylim = c(0, 90))
+legend("top", c("50", "55", "60", "65", "70"), ncol = 5, fill = rainbow(5))
+barplot(VADeaths, beside = F, col = rainbow(5)) # legend에 ncol을 지정해주면 가로로 범례가 나온다.
+legend("topright", c("50", "55", "60", "65", "70"), fill = rainbow(5))
+                                                # 위치이름, 문자열로 이루어진 범례명, 색구분
+                                                # top, bottom, left, right, topright, topleft, bottomright, bottomleft
+title(main = "지역별 사망 빈도", font.main = 4)
+                                                # title 함수로도 차트 제목 설정 가능, 폰트도 설정 가능
+
+
+# 점 차트 그래프
+
+chart_data <- c(222, 512, 845, 685, 375, 654, 854, 754)
+names(chart_data) <- c("2011년", "2012년", "2013년", "2014년", "2015년","2016년","2017년","2018년")
+
+dotchart(chart_data)                            # 점차트그래프
+
+dotchart(chart_data, color = c("blue"))         # 세로축 레이블과 점 색 지정
+dotchart(chart_data, lcolor = c("red"))         # 구분선 색 지정
+dotchart(chart_data, labels = names(chart_data))
+                                                # 이름이 지어지지 않은 데이터일 경우 레이블 이름 지정 가능
+dotchart(chart_data, pch = 1:5)                 # 점 모양 지정 가능, 1:5 -> 1번부터 5번까지의 모양
+                                                # 열 별로 번갈아가면서 모양 지정
+dotchart(chart_data, xlab = "매출액", ylab = "분기별 현황")
+                                                # 세로축과 가로축의 제목 지정
+dotchart(chart_data, cex = 1.2)                 # 확대 배율
+
+
+# 원형 차트 그래프
+
+chart_data <- c(222, 512, 845, 685, 375, 654, 854, 754)
+names(chart_data) <- c("2011년", "2012년", "2013년", "2014년", "2015년","2016년","2017년","2018년")
+
+pie(chart_data)                                 # 원형차트그래프
+
+pie(chart_data, col = rainbow(9), cex = 0.8, labels = names(chart_data), main = "분기별 매출 현황")
+
+
+# 2 연속변수의 시각화
+
+
+# 상자 그래프
+# 데이터의 분포를 나타내는데 많이 사용.
+# summary 함수의 내용을 시각화 한다고 생각하면 된다.
+
+data(VADeaths)                                  # 샘플 데이터 가져오기
+VADeaths
+
+boxplot(VADeaths)                               # 상자그래프
+
+boxplot(VADeaths, range = 0)                    # range = 0 은 최소값과 최대값을 점선으로 연결
+                                                # 0이 디폴트
+abline(h = 37, lty = 3, col = "green")          # 37 높이에 초록색으로 하여 스타일 3의 기준선을 그린다.
+
+
+# 히스토그램
