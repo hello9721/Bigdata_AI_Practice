@@ -44,5 +44,3 @@ setwd("C:/bigdataR/write csv")                       # 저장 디렉토리 설�
 write.csv(x = df, file = "Move_July.csv", row.names = F)
                                                      # 저장할 데이터, 저장할 파일이름, 행번호는 없이.
 
-
-# 2 
