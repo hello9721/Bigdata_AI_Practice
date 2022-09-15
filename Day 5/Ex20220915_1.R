@@ -47,6 +47,7 @@ wide                                            # ... -> 나머지 모두
 
 # acast(데이터, 행 기준 ~ 열 기준 ~ 면 기준)
 # array( = 3차원 구조 배열)로 변경
+# 추가 속성으로 (적용할 함수, margins = T/F)...
 
 data('airquality')
 airquality
@@ -67,3 +68,10 @@ air_melt
 air_3d <- acast(air_melt, day ~ month ~ variable)
                                                 # 비어있는 데이터들은 NA 로
 air_3d
+
+air_sum <- acast(air_melt, month ~ variable, mean, margins = T)
+                                                # 면 기준을 넣지 않으면 하나의 면만 생성
+                                                # 값에 함수가 적용되어
+                                                # 예제 같은 경우는 열 기준 한달 평균 표시
+                                                # margins가 활성화 되면 열 단위, 행 단위 전체 평균 표시
+air_sum
