@@ -65,4 +65,5 @@ names(air_melt) <- tolower(names(air_melt))     # tolower(name) -> 열 이름을
 air_melt
 
 air_3d <- acast(air_melt, day ~ month ~ variable)
+                                                # 비어있는 데이터들은 NA 로
 air_3d
