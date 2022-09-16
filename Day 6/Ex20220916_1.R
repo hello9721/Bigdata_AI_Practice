@@ -53,4 +53,67 @@ print(pay_data)
 
 # 2 표본추출
 
-# 정제 데이터 저장
+setwd("C:/bigdataR/write csv")
+
+write.csv(pay_data, file="pay_data_c.csv", row.names = F)
+
+data <- read.csv("pay_data_c.csv", header = T)
+
+# 표본 샘플링 ( 딥러닝에서 주로 사용하는 방식 )
+
+# 복원 추출 -> 중복 샘플 O
+# 비복원 추출 -> 중복 샘플 X
+
+nrow(data)                              # 샘플을 구할 데이터의 행 갯수 확인
+                                        # length(data) -> 데이터의 열 갯수 확인
+choice01 <- sample(nrow(data), 30)      # sample( n, m ) -> 1 ~ n 에서 m 개 만큼의 수를 랜덤 추출
+choice01                                # 비복원추출
+
+choice02 <- sample(50:nrow(data), 30)   # n:a -> n ~ a 에서 추출
+choice02
+
+choice03 <- sample(50:100, 30)
+
+choice04 <- sample(c(10:50, 80:150, 160:190), 30)
+                                        # 여러 범위에서 샘플 추출
+
+data[choice01, ]                        # 표본 데이터 추출
+
+
+data("iris")                            # 특정 비율로 랜덤하게 데이터를 뽑을 샘플 데이터 로드
+dim(iris)                               # 행, 열 수
+
+ind <- sample(1:nrow(iris), nrow(iris) * 0.7)
+                                        # 데이터의 총 행 개수의 70퍼센트 갯수에 해당하는 샘플 랜덤 추출
+
+training <- iris[ind, ]                 # 7할의 랜덤 학습 표본 데이터 추출
+testing <- iris[-ind, ]                 # 3할의 랜덤 검정 표본 데이터 추출
+
+                                        # 학습데이터 -> 패턴 학습에 사용할 데이터
+                                        # 검정데이터 -> 학습이 잘 이루어졌는지 검정할 데이터
+                                        # 학습데이터와 검정데이터는 서로 중복요소가 없는게 좋음.
+
+                                        # 학습:검정 = 7:3
+
+dim(training)
+dim(testing)
+
+
+# 교차 검정 샘플링
+
+# 동일한 데이터셋을 N등분하여 N-1개의 학습데이터로 하고
+# 나머지 1을 검정데이터로 이용
+
+# K겹 교차 검정 데이터셋 알고리즘 사용
+# EX) N = 3 => N1 = D1, D2, D3 | N2 = D1, D2, D3 | N3 = D1, D2, D3
+# EX) K = 3 => 검정:학습1/학습2 => N1 -> D1:D2/D3 | N2 -> D2:D1/D3 | N3 -> D3:D1/D2
+
+name <- c('a', 'b', 'c', 'd', 'e', 'f')
+score <- c(90, 85, 99, 75, 65, 88)
+
+df <- data.frame(Name = name, Score = score)
+                                          # 샘플 데이터 작성
+
+install.packages("cvTools")
+library(cvTools)
+                                          # 교차 검정을 위한 패키지 설치 및 로드
