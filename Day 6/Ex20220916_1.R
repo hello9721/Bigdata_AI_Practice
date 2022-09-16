@@ -156,6 +156,8 @@ str(airquality)
 
 # 기온이 가장 높은 날 -> 월/일 추출
 
+#1
+
 top_temp <- data.frame(Month = 0, Day = 0)
                                           # 날짜 값을 담아줄 데이터프레임 생성
 top_temp$Month <- airquality$Month[ airquality$Temp == max(airquality$Temp, na.rm = T)]
@@ -163,6 +165,13 @@ top_temp$Day <- airquality$Day[ airquality$Temp == max(airquality$Temp, na.rm = 
                                           # max를 이용하여 temp 열이 max 값인 month와 day를 추출하여 담음
 cat(top_temp$Month,"/",top_temp$Day)
                                           # 출력
+#2
+
+date <- subset(airquality, max(airquality$Temp) == Temp, select = c("Month","Day","Temp"))
+date
+                                          # subset(data, 조건, select = 선택할 열)
+                                          # airquality 데이터 셋에서 열 Temp에서의 최대값의 행을 출력하는데,
+                                          # Month Day Temp 순서대로 선택된 열을 출력한다.
 
 # 6월달 발생한 가장 강한 바람의 세기 추출
 
@@ -178,12 +187,22 @@ cat(July_avg_temp)
 
 # NA를 제외한 5월의 평균 오존 농도 추출
 
+# 1
+
 May_avg_ozone <- mean(airquality$Ozone[airquality$Month == 5], na.rm = T)
                                           # mean의 na.rm 속성을 이용하여 na를 모두 제거하고 난 5월의 오존 평균 값
 cat(May_avg_ozone)
 
+# 2
+
+Ozone_5 <- subset(airquality, Month == 5, select = Ozone)
+                                          # subset으로 Month가 5인 Ozone 열을 출력
+May_mean <- mean(Ozone_5$Ozone, na.rm = T)
+                                          # 그것을 na.rm을 활성화 시키고 평균을 구함
+May_mean
+
 # 오존 농도가 100을 넘는 날은 며칠인지 추출
 
-ozone_over100 <- length(airquality$Ozone[airquality$Ozone >= 100])
-                                          # length를 이용하여 ozone의 값이 100을 넘는 값들의 갯수를 카운트
-ozone_over100
+ozone_over100 <- airquality$Day[airquality$Ozone >= 100 & !is.na(airquality$Ozone)]
+                                          # Ozone이 100이 넘고 na가 아닌 Day를 출력
+length(ozone_over100)                     # length를 이용하여 갯수를 카운트
