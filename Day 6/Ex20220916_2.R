@@ -115,7 +115,54 @@ depthgroup
 
 xyplot(lat ~ long | depthgroup, quakes)
                                       # 범주화가 이루어져서 depth의 5 영역에 따라 지진 분포 표시
+                                      # x, y 가 따로 데이터를 품고 있다면 원본 데이터는 작성하지 안하도 된다. 
 
 magnitudegroup <- equal.count(quakes$mag, number = 2, overlap = 0)
 
 xyplot(lat ~ long | magnitudegroup, quakes)
+
+xyplot(lat ~ long | depthgroup * magnitudegroup, quakes)
+                                      # mag 1 그룹에 따른 depth 5 그룹 / mag 2 그룹에 따른 depth 5 그룹
+
+quakes$depth3[quakes$depth >= 39.5 & quakes$depth <= 80.5] <- 'D1'
+quakes$depth3[quakes$depth >= 79.5 & quakes$depth <= 186.5] <- 'D2'
+quakes$depth3[quakes$depth >= 185.5 & quakes$depth <= 397.5] <- 'D3'
+quakes$depth3[quakes$depth >= 396.5 & quakes$depth <= 562.5] <- 'D4'
+quakes$depth3[quakes$depth >= 562.5 & quakes$depth <= 680.5] <- 'D5'
+                                
+quakes$mag2[quakes$mag >= 3.95 & quakes$mag <= 4.65] <- 'M1'
+quakes$mag2[quakes$mag >= 4.55 & quakes$mag <= 6.45] <- 'M2'
+                                      # 아까 적용 시켰던 equal.count의 범위에 따라 레이블링
+
+convert <- transform(quakes, depth3 = factor(depth3), mag2 = factor(mag2))
+                                      # 원본 데이터에서 설정한 열만 다른 타입으로 변경
+
+xyplot(lat ~ long | depth3 * mag2, convert, col = c("green", "darkblue"))
+
+
+# 조건 그래프
+# coplot( y ~ x | 조건 열, data)
+# 조건에 의한 x에 대한 y 그래프
+
+# row = n ( 한 행의 몇개의 패널을 표시 ) / number = n ( 패널 수 ) / overlap = n (겹치는 구간)
+
+coplot(lat ~ long | depth, quakes, overlap = 0.1, rows = 2, number = 4)
+
+coplot(lat ~ long | depth, quakes, overlap = 0.1, rows = 1, number = 4, panel = panel.smooth)
+                                      # 패널 영역에 부드러운 곡선 추가
+
+coplot(lat ~ long | depth, quakes, overlap = 0.1, rows = 1, col = 'orange', bar.bg = c(num = 'darkgreen'))
+                                      # col => 그래프 색 / bar.bg = c(num = '') => 조건 막대 색
+
+coplot(lat ~ long | mag, quakes, overlap = 0, number = 5, rows = 1, bar.bg = c( num = 'lightblue' ), col = 'darkgreen')
+
+
+# 3차원 산점도 그래프
+# cloud(z ~ y * x, data)
+
+cloud(depth ~ lat * long, quakes, xlab = "경도", ylab = "위도", zlab ="깊이", zlim = rev(range(quakes$depth)))
+                                      # zlim => z의 구간 / rev(range(data)) => 데이터의 구간을 뒤집어서(reverse) 표시
+
+cloud(depth ~ lat * long, quakes, xlab = "경도", ylab = "위도", zlab ="깊이", screen = list(z = 45))
+                                      # screen = list() => list 안쪽에서 설정한 x, y, z의 각도만큼 회전시켜서 그래프 표시
+                                      # panel.aspect => 테두리 사이즈
