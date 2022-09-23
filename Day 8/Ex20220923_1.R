@@ -181,3 +181,36 @@ goodsAll
   # update TABLE set COL1 = VAL5, COL2 = VAL9 where COL3 = VAL3
                                                 # 조건에 맞는 행의 열들의 값이 지정한 값들로 변경
 
+# 테이블 제거
+  # drop table TABLE
+
+
+
+
+# 실습 예제
+
+# shopUser      고객
+  # uID( varchar(10), PRIMARY KEY ), uName( varchar(20) ), uAge( int ) 
+
+# shopProduct   상품
+  # pCode( int, PRIMARY KEY ), pName( varchar(20) ), pPrice( int )
+
+# shopSale      매출
+  # uID, pCode, sCount( int )
+
+
+# heidiSQL 에서 GUI 방식으로 테이블 편집 가능
+# heidiSQL 주석 => /* hello */
+
+# join Query
+
+  # 테이블 명과 열이름을 . 으로 연결하여 세부적으로 선택 가능
+  # FROM 에서 '테이블 별명' 으로 좀더 간편한 별명 설정 가능
+
+  # SELECT u.uID, u.uName, u.uAge, p.pName, p.pCode, s.sCount, p.pPrice
+  #   FROM shopuser u, shopsale s, shopproduct p
+  #   WHERE u.uID = s.uID AND s.pCode = p.pCode;
+
+  # SELECT NICKNAME1.COL, ...
+  #   FROM TABLE1 NICKNAME1, TABLE2 NICKNAME2, ...
+  #   WHERE NICKNAME1.COL = 조건, ...;
