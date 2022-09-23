@@ -29,4 +29,4 @@ INSERT INTO shopsale VALUES ( 'A3', 104, 2 );
 INSERT INTO shopsale VALUES ( 'A2', 101, 5 );
 INSERT INTO shopsale VALUES ( 'A1', 102, 3 );
 
-/* 주석  == css 주석과 같다 */
+
