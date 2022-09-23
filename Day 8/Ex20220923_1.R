@@ -25,7 +25,7 @@
 
 # MariaDB 사용시 필요 파일
 
-  # MariaDB 설치 패키지, jdk의 11 GA , MySQL connector/j의 5.xx버전
+  # MariaDB 설치 패키지, jdk의 11 GA 버전, MySQL connector/j의 5.xx버전
 
 
 # 설치 순서
