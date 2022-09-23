@@ -185,21 +185,6 @@ goodsAll
   # drop table TABLE
 
 
-
-
-# 실습 예제
-
-# shopUser      고객
-  # uID( varchar(10), PRIMARY KEY ), uName( varchar(20) ), uAge( int ) 
-
-# shopProduct   상품
-  # pCode( int, PRIMARY KEY ), pName( varchar(20) ), pPrice( int )
-
-# shopSale      매출
-  # uID, pCode, sCount( int )
-
-
-
 # heidiSQL
   
   # GUI 방식으로 테이블 편집 가능
@@ -217,3 +202,17 @@ goodsAll
       # SELECT NICKNAME1.COL, ...
       #   FROM TABLE1 NICKNAME1, TABLE2 NICKNAME2, ...
       #   WHERE NICKNAME1.COL = 조건, ...;
+
+
+
+# 실습 예제
+
+# shopUser      고객
+  # uID( varchar(10), PRIMARY KEY ), uName( varchar(20) ), uAge( int ) 
+
+# shopProduct   상품
+  # pCode( int, PRIMARY KEY ), pName( varchar(20) ), pPrice( int )
+
+# shopSale      매출
+  # uID, pCode, sCount( int )
+
