@@ -106,7 +106,7 @@ goodSel <- dbGetQuery(conn, "select * from goodSel")        # 조회 하여 확�
 data <- read.csv(file = "C:/source/Part2/recode.csv", fileEncoding = "euc-kr")
 dbWriteTable(conn, "goods2", data)                          # csv 데이터 불러와서 테이블로 데이터베이스에 저장
 
-goodAll <- dbGetQuery(conn, "select * from goods2")         # 테이블 조회 
+goodsAll <- dbGetQuery(conn, "select * from goods2")         # 테이블 조회 
                                     
 
 # 테이블에 레코드 추가
@@ -131,3 +131,26 @@ goodsAll
 # DB와 연결 종료
 
 dbDisconnect(conn)
+
+
+# 실습
+# code = 6 / dan = 200000 / name = "청소기" / su = 2
+
+dbSendUpdate(conn, "insert into goods2 values( 6, '청소기', 2, 200000)")
+
+goodsAll <- dbGetQuery(conn, "select * from goods2")
+goodsAll
+
+# dan >= 600000 => su = 5
+
+dbSendUpdate(conn, "update goods2 set su = 5 where dan >=600000")
+
+goodsAll <- dbGetQuery(conn, "select * from goods2")
+goodsAll
+
+# 수량이 1인 물품 삭제
+
+dbSendUpdate(conn, "delete from goods2 where su = 1")
+
+goodsAll <- dbGetQuery(conn, "select * from goods2")
+goodsAll
