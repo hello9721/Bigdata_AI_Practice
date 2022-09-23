@@ -16,7 +16,7 @@ library(ggmap)
 # zoom -> 확대 비율
 # maptype -> 지도 유형
 # crop -> 원시 맵 타일을 크롭 한다. F이면 넘친다.
-# urlonly -> ㅕ기 qksghks
+# urlonly -> URL 반환
 # color -> 컬로 또는 흑백 -> "color", "bw"
 # force 지도가 파일에 있으면 새지도를 찾는다 T 안찾는다 F
 
