@@ -78,7 +78,7 @@
 # select, insert, update, delete
     
   # select FieldList from TABLE [ where 조건 order by 정렬 ]
-  # insert into TABLE ( FieldList ) values (ValueList)
+  # insert into TABLE ( FieldList ) values ( ValueList )
   # update TABLE set Field1 = Val1 , ... where 조건
   # delete from TABLE where 조건
   
