@@ -35,5 +35,5 @@
           2 - ggmap 패키지 ( get_stamenmap() / ggmap() ) 의 사용과 고급 시각화 기법 연습 문제
 #### 22/09/23
     Day 8 1 - MariaDB 설치 및 사용, 문법 ( 테이블과 레코드의 추가 / 수정 / 삭제 / 정렬 / 조회 ) => 정형 데이터 처리
-          2 - 
+              / heidiSQL 사용 실습 예제 ( https://github.com/XIUMAMU/R_Practice/tree/main/Day%208/Query )
                             
