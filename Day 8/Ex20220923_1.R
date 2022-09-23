@@ -72,6 +72,10 @@
 
     
 # 데이터베이스의 레코드 검색, 정렬, 추가, 수정, 삭제
+    
+    
+    # DML ( Data Manipulation Language ) : 데이터 조작어
+    # select, insert, update, delete
 
     
 # 레코드 검색
@@ -154,3 +158,21 @@ dbSendUpdate(conn, "delete from goods2 where su = 1")
 
 goodsAll <- dbGetQuery(conn, "select * from goods2")
 goodsAll
+
+
+# 데이터베이스 데이터 처리 문법
+
+# 특정 문자열로 시작하거나 끝나는 레코드 조회
+  # select * from TABLE where COL like '%STR'   # 해당 문자열로 끝나는 행
+  # select * from TABLE where COL like 'STR%'   # 해당 문자열로 시작하는 행
+
+# 일부 열의 데이터만 추가
+  # NULL 값을 허용하는 열만 가능
+  # desc TABLE 로 조회
+  # insert into TABLE ( COL1, COL3, ...) values ( VAL1, VAL3, ... )
+                                                # COL2 생략 -> NA로 기록
+
+# 복수의 열에 대해 수정
+  # update TABLE set COL1 = VAL5, COL2 = VAL9 where COL3 = VAL3
+                                                # 조건에 맞는 행의 열들의 값이 지정한 값들로 변경
+
