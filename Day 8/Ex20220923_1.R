@@ -74,10 +74,15 @@
 # 데이터베이스의 레코드 검색, 정렬, 추가, 수정, 삭제
     
     
-    # DML ( Data Manipulation Language ) : 데이터 조작어
-    # select, insert, update, delete
-
+# DML ( Data Manipulation Language ) : 데이터 조작어
+# select, insert, update, delete
     
+  # select FieldList from TABLE [ where 조건 order by 정렬 ]
+  # insert into TABLE ( FieldList ) values (ValueList)
+  # update TABLE set Field1 = Val1 , ... where 조건
+  # delete from TABLE where 조건
+  
+      
 # 레코드 검색
     
 sellAll <- dbGetQuery(conn, "select * from sell")
