@@ -145,14 +145,22 @@ html <- GET(url)                                  # 주소에 한글이 들어�
                                                   
 # 한글 인코딩 처리
 
-searchName <-
+searchName <- URLencode("노트북")
 
-url <- 
+url <- paste("http://browse.auction.co.kr/search?keyword=", searchName, "&itemno=&nickname=&frm=hometab&dom=auction&isSuggestion=Yes&retry=&Fwk=", searchName, "&acode=SRP_SU_0100&arraycategory=&encKeyword=", searchName, sep = "")
 
 html <- GET(url)
 html <- htmlTreeParse(html, useInternalNodes = T, trim = T, encoding = 'utf-8')
-root <- xmlRoot(root)
+root <- xmlRoot(html)
 
-s_title <- xpathSApply(root, "//span[@class = 'text--title']", xmlValue)
+s_product <- xpathSApply(root, "//span[@class = 'text--title']", xmlValue)
+s_price <- xpathSApply(root, "//strong[@class = 'text--price_seller']", xmlValue)
+                                                  # 상품명, 가격 추출
 
-url
+s_price <- gsub(',', "", s_price)
+s_price <- as.numeric(s_price)                    # 나중에 가격을 낮은순, 높은순으로 정렬해서 볼수 있도록
+                                                  # , 를 빼주고 numeric 형식으로 바꿔준다.
+
+shop <- data.frame(상품명 = s_product, 가격 = s_price)
+
+write.csv(shop, "laptop_list.csv", row.names = F, fileEncoding = "euc-kr")
