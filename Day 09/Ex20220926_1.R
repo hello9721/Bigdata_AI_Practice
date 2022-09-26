@@ -34,13 +34,14 @@ news                                              # xpathSApply(root, "//tag[@�
 
 # 전처리
 
-news_pre <- gsub("[\r\n\t]", '', news)            # gsub("패턴", "교체문자", 원본)
+news_pre <- gsub("[\r\n\t]", '', news)            # gsub("찾을 문자 혹은 패턴", "교체문자", 원본)
 news_pre <- gsub("\\s+", ' ', news_pre)           # \\s+ => 2개 이상 공백 교체
 news_pre <- gsub('[[:punct:]]', '', news_pre)     # [[:punct:]] => 문장부호
 news_pre <- gsub('[[:cntrl:]]', '', news_pre)     # [[:cntrl:]] => 특수문자
-news_pre <- gsub('[[]]', '', news_pre)            # [원하는문장부호] 제거
+news_pre <- gsub('[[]]', '', news_pre) 
 news_pre <- gsub('뉴스1 PICK', '', news_pre)      # \\d+ => 숫자
 news_pre                                          # [a-z]+ / [A-Z]+ => 소 / 대문자 영어
+                                                  
 
 library(stringr)
 news_pre <- str_trim(news_pre)                    # 좌우 공백 제거
@@ -157,10 +158,118 @@ s_product <- xpathSApply(root, "//span[@class = 'text--title']", xmlValue)
 s_price <- xpathSApply(root, "//strong[@class = 'text--price_seller']", xmlValue)
                                                   # 상품명, 가격 추출
 
-s_price <- gsub(',', "", s_price)
-s_price <- as.numeric(s_price)                    # 나중에 가격을 낮은순, 높은순으로 정렬해서 볼수 있도록
-                                                  # , 를 빼주고 numeric 형식으로 바꿔준다.
+s_price <- gsub(',', "", s_price)                 # 나중에 가격을 낮은순, 높은순으로 정렬해서 볼수 있도록
+s_price <- as.numeric(s_price)                    # , 를 빼주고 numeric 형식으로 바꿔준다.
+
+library(stringr)
+s_product <- str_trim(s_product)    
 
 shop <- data.frame(상품명 = s_product, 가격 = s_price)
 
 write.csv(shop, "laptop_list.csv", row.names = F, fileEncoding = "euc-kr")
+
+
+# XML 이용한 반정형 데이터 처리
+
+# 공공데이터포털에 요청한 대기오염정보를 이용
+
+region <- URLencode("충북")
+
+url <- paste("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=Fl%2B01oBLpWDxQgnBnovdYTZTLErq6%2BEssBdfhTmnwVA4jaBEGRlGamqyAH%2FPiZvS80c%2FJ%2BksHyB1z1igobb%2Fbw%3D%3D&returnType=xml&numOfRows=100&pageNo=1&sidoName=", region, "&ver=1.0", sep = "" )
+
+# "https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/이용서비스?serviceKey=일반 인코드 키&returnType=받을 데이터 타입&numOfRows=한페이지 결과수&pageNo=페이지 수&[sido/station]Name=조회[지역/측정소][&dataTerm=데이터측정기간]&ver=버전"
+
+xmlF <- xmlParse(url)
+
+df <- xmlToDataFrame(getNodeSet(xmlF, "//item"))  # xml파일을 탐색하면서 item 태그를 전부 dataframe으로 저장
+
+# items : 목록
+# so2 : 아황산가스 / co : 일산화탄소 / khai : 통합대기환경
+# pm25 : 초미세먼지 / pm10 : 미세먼지
+# o3 : 오존 / sido : 지역 / no2 : 이산화질소 / station : 측정소
+# Grade : 지수 [ 1 - 4 | 좋음 - 매우나쁨]
+# Value : 농도 / Flag : 플래그
+
+# 충북 대기오염지수 데이터프레임
+air_grade_df <- data.frame(측정소 = df$stationName, 대기환경지수 = df$khaiGrade, 초미세먼지지수 = df$pm10Grade,
+                           미세먼지지수 = df$pm10Grade, 오존지수 = df$o3Grade, 일산화탄소지수 = df$coGrade,
+                           이산화질소지수 = df$no2Grade, 아황산가스지수 = df$so2Grade)
+
+# 충북 대기오염농도 데이터프레임
+air_value_df <- data.frame(측정소 = df$stationName, 대기환경농도 = df$khaiValue, 초미세먼지농도 = df$pm10Value,
+                           미세먼지농도 = df$pm10Value, 오존농도 = df$o3Value, 일산화탄소농도 = df$coValue,
+                           이산화질소농도 = df$no2Value, 아황산가스농도 = df$so2Value)
+
+# 미세먼지 농도 그래프
+
+station <- air_value_df$측정소
+pm10V <- as.numeric(air_value_df$미세먼지농도)
+
+barplot(pm10V, names.arg = station, col = rainbow(7))
+
+
+# 특정 측정소의 실시간 정보 데이터
+
+install.packages("RCurl")
+library(RCurl)                                  # Error: XML content does not seem to be XML 해결을 위한 패키지 설치 및 
+
+region <- URLencode("복대동")
+
+url <- paste("https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey=Fl%2B01oBLpWDxQgnBnovdYTZTLErq6%2BEssBdfhTmnwVA4jaBEGRlGamqyAH%2FPiZvS80c%2FJ%2BksHyB1z1igobb%2Fbw%3D%3D&returnType=xml&numOfRows=100&pageNo=1&stationName=", region, "&dataTerm=MONTH&ver=1.0", sep = "")
+
+dataurl <- getURL(url)                          # RCurl에서 제공하는 getURL을 사용하여 url을 뽑아내서 파싱
+
+xmlF <- xmlParse(dataurl)
+df <- xmlToDataFrame(getNodeSet(xmlF, "//item"))
+df
+
+# 복대동 대기환경지수 데이터
+bokdae_grade_df <- data.frame(측정시간 = df$dataTime, 대기환경지수 = df$khaiGrade, 초미세먼지지수 = df$pm10Grade,
+                              미세먼지지수 = df$pm10Grade, 오존지수 = df$o3Grade, 일산화탄소지수 = df$coGrade,
+                              이산화질소지수 = df$no2Grade, 아황산가스지수 = df$so2Grade)
+
+# 복대동 대기환경농도 데이터
+bokdae_value_df <- data.frame(측정시간 = df$dataTime, 대기환경농도 = df$khaiValue, 초미세먼지농도 = df$pm10Value,
+                              미세먼지농도 = df$pm10Value, 오존농도 = df$o3Value, 일산화탄소농도 = df$coValue,
+                              이산화질소농도 = df$no2Value, 아황산가스농도 = df$so2Value)
+
+bokdae_pm10 <- as.numeric(bokdae_value_df$미세먼지농도)
+bokdae_pm10 <- ifelse(is.na(bokdae_pm10), round( mean(bokdae_pm10, na.rm = T), 0), bokdae_pm10)
+
+bokdae_time <- bokdae_value_df$측정시간
+
+# 복대동 시간별 미세먼지농도 그래프
+barplot(bokdae_pm10, names.arg = str_sub(bokdae_time, 12), col = rainbow(12))
+
+
+# WordCloud 그리기
+# 빈도수가 많은 단어부터 적은 단어까지 크기별로 그려짐
+
+install.packages("wordcloud")
+library(wordcloud)                              # 패키지 설치 및 로드
+
+word <- c("서울", "부산", "대구")               # 샘플 단어 데이터
+freq <- c(300, 230, 150)                        # 샘플 단어별 빈도수 데이터
+
+wordcloud(word, freq, random.order = F, random.color = F, colors = rainbow(4))
+                                                # wordcloud(단어, 빈도수[, ...])
+                                                # min.frq = n -> 최소 빈도수
+                                                # random.order = T/F -> 중심단어위치 변함/그대로
+
+# 순이동이 - 가 아닌 시군 중 전입이 많은 시군을 Wordcloud로 그리기
+
+pop <- read.csv(file.choose(), header = T, fileEncoding = "euc-kr")
+head(pop)
+
+region1 <- grep('시$', pop$행정구역.시군구.별)
+region2 <- grep('군$', pop$행정구역.시군구.별)
+                                                # 시와 군 인덱스 데이터 추출
+region1 <- pop[region1, ]
+region2 <- pop[region2, ]
+                                                # 해당 인덱스의 데이터 추출
+region <- rbind(region1, region2)               # 두 데이터를 통합한 후
+region <- region[  region$순이동.명. > 0 , ]    # 순이동이 양수인 데이터만 추출
+region
+
+wordcloud(region$행정구역.시군구.별, region$총전입.명., random.order = F, scale = c(5,1), random.color = F, colors = rainbow(50))
+                                                # 전입 기준으로 그리기기
