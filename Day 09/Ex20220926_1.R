@@ -256,7 +256,7 @@ wordcloud(word, freq, random.order = F, random.color = F, colors = rainbow(4))
                                                 # min.frq = n -> 최소 빈도수
                                                 # random.order = T/F -> 중심단어위치 변함/그대로
 
-# 순이동이 - 가 아닌 시군 중 전입이 많은 시군을 Wordcloud로 그리기
+# 순이동이 - 가 아닌 시군을 Wordcloud로 그리기
 
 pop <- read.csv(file.choose(), header = T, fileEncoding = "euc-kr")
 head(pop)
@@ -271,5 +271,12 @@ region <- rbind(region1, region2)               # 두 데이터를 통합한 후
 region <- region[  region$순이동.명. > 0 , ]    # 순이동이 양수인 데이터만 추출
 region
 
-wordcloud(region$행정구역.시군구.별, region$총전입.명., random.order = F, scale = c(5,1), random.color = F, colors = rainbow(50))
-                                                # 전입 기준으로 그리기기
+wordcloud(region$행정구역.시군구.별, region$순이동.명., random.order = F, scale = c(5,1), random.color = F, colors = rainbow(50))
+                                                # 순이동 기준으로 그리기
+
+df <- data.frame( 지역 = region$행정구역.시군구.별, 순이동 = region$순이동.명.)
+
+install.packages("wordcloud2")
+library(wordcloud2)
+
+wordcloud2(df)
