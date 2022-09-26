@@ -60,7 +60,7 @@ write.csv(news_data, "./news.csv", fileEncoding = "euc-kr", row.names = F)
 
 # 실습 예제
 
-# 코로나 19 사이트의 보도자료 탭의 번호 제목 담당자 파싱
+# 코로나 19 사이트의 보도자료 탭의 번호, 제목, 작성자 파싱
 # URL : http://ncov.kdca.go.kr/tcmBoardList.do?brdId=&brdGubun=&dataGubun=&ncvContSeq=&contSeq=&board_id=140&gubun=
 
 URL <- "http://ncov.kdca.go.kr/tcmBoardList.do?brdId=&brdGubun=&dataGubun=&ncvContSeq=&contSeq=&board_id=140&gubun="
@@ -69,6 +69,8 @@ HTML <- GET(URL)
 HTML <- htmlTreeParse(HTML, useInternalNodes = T, trim = T, encoding = 'utf-8')
 root <- xmlRoot(HTML)                             # root 노드 소스 코드 추출
 
+# 번호, 작성자 파싱 - 방법 A
+
 num <- xpathSApply(root, "//td[@class = 'm_dp_n']", xmlValue)
 num <- num[num != "첨부파일"]                     # 번호 뿐만 아니라 작성자, 첨부파일 까지 딸려옴
 num                                               # 첨부파일 항목을 지운 후
@@ -76,13 +78,24 @@ num                                               # 첨부파일 항목을 지�
 number <- num[str_length(num) == 4]               # 번호는 4자리 숫자로 되어있으므로 길이가 4인 항목을 추출
 number
 
-charge <- num[str_length(num) != 4]               # 나머지 길이가 4가 아닌 항목도 추출
-charge
+author <- num[str_length(num) != 4]               # 나머지 길이가 4가 아닌 항목도 추출
+author
+
+# 번호, 작성자 파싱 - 방법 B
+
+number <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[1]", xmlValue)
+                                                  # 바로 부모자식관계의 태그일 경우 /
+                                                  # 몇단계 떨어진 관계일 경우 //
+                                                  # tr 안의 여러개의 td 중 [1] 번째
+author <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[3]", xmlValue)
+
+
+# 제목 파싱
 
 title <- xpathSApply(root, "//a[@class = 'bl_link']", xmlValue)
 title                                             # root에서 제목도 추출
 
-covid_df <- data.frame(No = number, Title = title, Author = charge)
+covid_df <- data.frame(No = number, Title = title, Author = author)
 covid_df                                          # 뽑아낸 정보로 데이터프레임 생성
 
 write.csv(covid_df, "Covid.csv", row.names = F, fileEncoding = "euc-kr")
