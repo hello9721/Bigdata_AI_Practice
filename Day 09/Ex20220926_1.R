@@ -104,3 +104,55 @@ covid_df                                          # 뽑아낸 정보로 데이�
 write.csv(covid_df, "Covid.csv", row.names = F, fileEncoding = "euc-kr")
                                                   # csv 파일로 저장
 
+
+# 반복문을 이용하여 여러 페이지의 데이터를 저장
+# 1~10 페이지
+
+covid_df <- data.frame(No = NULL, Title = NULL, Author = NULL, Date = NULL)
+                                                  # 데이터가 누적되어 들어갈 df
+
+for(i in c(1:10)){
+  url <- paste("http://ncov.kdca.go.kr/tcmBoardList.do?pageIndex=",i,"&brdId=&brdGubun=&board_id=140&search_item=1&search_content=", sep = "")
+                                                  # paste( str1, num1, ..., sep="구분자" )  -> 구분자로 여러 데이터형을 연결
+                                                  # 구분자의 기본값은 " "
+  HTML <- GET(URL)
+  HTML <- htmlTreeParse(HTML, useInternalNodes = T, trim = T, encoding = 'utf-8')
+  root <- xmlRoot(HTML)
+
+  number <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[1]", xmlValue)
+  
+  author <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[3]", xmlValue)
+ 
+  title <- xpathSApply(root, "//a[@class = 'bl_link']", xmlValue)
+  
+  date <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[4]", xmlValue)
+
+  sub <- data.frame(No = number, Title = title, Author = author, Date = date) 
+                                                  # 결합을 위해 임시로 만든 df
+  covid_df <- rbind(covid_df, sub)                # 행기준 결합
+}
+
+write.csv(covid_df, "Covid_1to10.csv", row.names = F, fileEncoding = "euc-kr")
+
+
+# 쇼핑몰 스크래핑
+
+searchName <- "노트북"
+
+url <- paste("http://browse.auction.co.kr/search?keyword=", searchName, "&itemno=&nickname=&frm=hometab&dom=auction&isSuggestion=Yes&retry=&Fwk=", searchName, "&acode=SRP_SU_0100&arraycategory=&encKeyword=", searchName, sep = "")
+
+html <- GET(url)                                  # 주소에 한글이 들어가면 인코딩 된 후후 들어가야함
+                                                  
+# 한글 인코딩 처리
+
+searchName <-
+
+url <- 
+
+html <- GET(url)
+html <- htmlTreeParse(html, useInternalNodes = T, trim = T, encoding = 'utf-8')
+root <- xmlRoot(root)
+
+s_title <- xpathSApply(root, "//span[@class = 'text--title']", xmlValue)
+
+url
