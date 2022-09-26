@@ -36,4 +36,5 @@
 #### 22/09/23
     Day 8 1 - 정형 데이터 처리 [ MariaDB 설치 및 사용, 문법 ( 테이블과 레코드의 추가 / 수정 / 삭제 / 정렬 / 조회 )
               / heidiSQL 사용 실습 예제 ( https://github.com/XIUMAMU/R_Practice/tree/main/Day%208/Query ) ]
-                            
+#### 22/09/26
+    Day 9 1 - 반정형 데이터 처리 [ httr 패키지와 XML 패키지를 이용한 웹 스크래핑 ]
