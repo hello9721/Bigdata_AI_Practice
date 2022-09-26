@@ -90,12 +90,15 @@ number <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[1]", xmlV
 author <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[3]", xmlValue)
 
 
-# 제목 파싱
+# 제목, 날짜 파싱
 
 title <- xpathSApply(root, "//a[@class = 'bl_link']", xmlValue)
-title                                             # root에서 제목도 추출
+                                                  # root에서 제목도 추출
 
-covid_df <- data.frame(No = number, Title = title, Author = author)
+date <- xpathSApply(root, "//div[@class = 'board_list']//tbody/tr/td[4]", xmlValue)
+                                                  # 작성날짜 추출
+
+covid_df <- data.frame(No = number, Title = title, Author = author, Date = date)
 covid_df                                          # 뽑아낸 정보로 데이터프레임 생성
 
 write.csv(covid_df, "Covid.csv", row.names = F, fileEncoding = "euc-kr")
