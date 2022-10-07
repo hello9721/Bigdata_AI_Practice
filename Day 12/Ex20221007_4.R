@@ -56,7 +56,7 @@ summary(data)                                     # 이상치 제거 확인
 boxplot(data$score)
 
 data$method[data$method == 1] <- "방법1"          # 리코딩
-data$method[data$method == 2] <- "방법2"
+data$method[data$method == 2] <- "방법2"          # 사후검정에서 보기 쉽게 하기 위해해
 data$method[data$method == 3] <- "방법3"
 
 x <- table(data$method)                           # 교육 방법 별 빈도수
