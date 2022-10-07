@@ -82,8 +82,8 @@ summary(test)                                     # p 확인
 # 사후 검정
 # 분산분석의 결과로 집단별 평균 차에 대한 비교를 통해 사후검정 수행
 
-TukeyHSD(test)
-plot(TukeyHSD(test))
+TukeyHSD(test)                                    # diff 집단간 차이 lwr, upr 신뢰구간의 하한값, 상한값 p adj 각 구간의 p값
+plot(TukeyHSD(test))                              # 신뢰구간에 0이 포함된다면 토예적으로 유의하지 않다.
 
-# 그래프를 보면 방법2-방법1 일때 평균의 차이가 2~3 으로 가장 크게 나타난다.
+# 그래프를 보면 방법2-방법1의 평균 차이가 2~3 으로 가장 크게 나타난다.
 
