@@ -2,7 +2,7 @@
 
 </br>
 
-![PACKAGE.R]("https://github.com/hello9721/R_Practice/blob/main/PACKAGE.R")
+[PACKAGE.R](https://github.com/hello9721/R_Practice/blob/main/PACKAGE.R)
                 수업 과정 중 활용한 패키지들 모음 ( 샘플데이터활용 / 함수활용 / 시각화활용 )
 #
 #### 22/08/24  
