@@ -7,18 +7,18 @@
                => 수업 과정 중 활용한 패키지들 모음 ( 샘플데이터활용 / 함수활용 / 시각화활용 )
 #
 #### 22/08/24  
-    Day 01 1 - R의 개요 및 변수와 응용 함수 ( :link: https://velog.io/@hello9721/R-001 ) 
+    Day 01 1 - R의 개요 및 변수와 응용 함수 ( https://velog.io/@hello9721/R-001 ) 
 
 #
 #### 22/08/26  
     Day 02 1 - 문자열 및 데이터의 입출력과 저장
                * 통계청 기준 지역별 인구 통계 데이터 추출 :  
-               ( 실습 파일 > :link: https://github.com/XIUMAMU/R_Practice/tree/main/Day%202/Practice )
+               ( 실습 파일 > https://github.com/XIUMAMU/R_Practice/tree/main/Day%202/Practice )
 
 #
 #### 22/09/01
     Day 03 1 - 숙제 검토 ( 인구 이동 통계에서 시, 군의 순이동이 양수 인 데이터만 추출 )
-               ( 실습 파일 > :link: https://github.com/XIUMAMU/R_Practice/blob/main/Day%203/Practice/Move_July.csv )
+               ( 실습 파일 > https://github.com/XIUMAMU/R_Practice/blob/main/Day%203/Practice/Move_July.csv )
            2 - 연산자 ( 산술/관계/논리 연산자 ) 와 조건문 ( if/else if/ifelse/switch/which )
            3 - 반복문 ( for/while ) 과 함수 정의 ( function )
            4 - 주요 내장함수
@@ -52,7 +52,7 @@
 #
 #### 22/09/23
     Day 08 1 - 정형 데이터 처리 [ MariaDB 설치 및 사용, 문법 ( 테이블과 레코드의 추가 / 수정 / 삭제 / 정렬 / 조회 )
-               / heidiSQL 사용 실습 예제 ( :link: https://github.com/XIUMAMU/R_Practice/tree/main/Day%208/Query ) ]
+               / heidiSQL 사용 실습 예제 ( https://github.com/XIUMAMU/R_Practice/tree/main/Day%208/Query ) ]
 
 #
 #### 22/09/26
