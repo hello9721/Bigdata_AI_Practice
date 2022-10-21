@@ -4,6 +4,8 @@ install.packages("hflights")
 install.packages("mlmRev")
 install.packages("datasets")
 
+#----------------------------------------------------------------------------------------------------#
+
 install.packages("stringr")                       # 문자열 연산을 위한 패키지
 install.packages("dplyr")                         # 파이프연산자, tbl_df, filter, arrange, rename,
 #                                                 # select, mutate, summarise, group_by, join, bind,
@@ -27,6 +29,7 @@ install.packages("randomForest")                  # 랜덤 포레스트를 위�
 install.packages("arules")                        # 연관 규칙 생성을 위한 패키지
 install.packages("nnet")                          # 인공 신경망 모델 생성 패키지
 
+#----------------------------------------------------------------------------------------------------#
 
 install.packages("scatterplot3d")                 # 3차원 산점도 시각화
 install.packages("lattice")                       # histogram, densityplot, barchart, dotplot,
