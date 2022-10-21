@@ -8,6 +8,8 @@
 
 # 정규화 -> 데이터 재구성 -> 인공신경망 학습 -> 데이터 예측 -> 모델 평가
 
+setwd("C:/bigdataR/data")
+
 data <- read.csv("data_5410_20221021.csv", header = T, fileEncoding = "euc-kr")
 
 str(data)
@@ -56,6 +58,8 @@ o_train <- reData(train$norm, 1 + hidden, nrow(train), output)
 i_test <- reData(test$norm, 1, nrow(test)-output, hidden)
 o_test <- reData(test$종가, 1 + hidden, nrow(test), output)
 
+library(nnet)
+
 model <- nnet(i_train, o_train, size = hidden, maxit = iter)
                                         # 신경망 모델 생성
 
@@ -82,6 +86,8 @@ b_p2 <- (((p2 - 0.05)/0.9) * m) + min(cd$종가)
 er <- abs(nd$종가[160:164] - b_p2)
 mean(er/nd$종가[160:164]) * 100         # 오차 비율 2.5%
 
-plot(c(100:159), nd$종가[100:159], xlim = c(100, 164), ylim = c(30000, 80000), type = "o")
+plot(c(100:160), nd$종가[100:160], xlim = c(100, 164), ylim = c(30000, 80000), type = "o")
 lines(c(160:164), b_p2, col = "red", type = "o")
                                         # 시각화
+
+
