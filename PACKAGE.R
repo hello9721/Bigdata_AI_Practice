@@ -1,3 +1,6 @@
+
+#----------------------------------------------------------------------------------------------------#
+
 install.packages("RSADBE")                        # 샘플 데이터 셋 패키지
 install.packages("UsingR")
 install.packages("hflights")
@@ -41,3 +44,5 @@ install.packages("corrgram")                      # 상관계수 시각화
 install.packages("PerformanceAnaltics")           # 밀도곡선, 상관성, 유의확률 추가 시각화
 install.packages("ROCR")                          # ROC Curve의 시각화
 install.packages("rpart.plot")                    # rpart ctree의 시각화를 위한 패키지
+
+#----------------------------------------------------------------------------------------------------#
