@@ -28,7 +28,7 @@ class MyApp(QWidget) :                      # 클래스 정의
         self.current_region = name
         self.tbl_2.setColumnWidth(0, 154)
         
-        if name != "지역선택":
+        if name != "지역선택":              # 조회 가능한 지역 목록 불러오기
             
             url = f'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey={self.key}&returnType=xml&numOfRows=500&pageNo=1&sidoName={name}&ver=1.0'
             
@@ -51,7 +51,7 @@ class MyApp(QWidget) :                      # 클래스 정의
             
     def box_2_select(self):                 # 두번째 콤보상자의 현재 상태가 바뀔때
         
-        if self.comb_lst_2 != []:
+        if self.comb_lst_2 != []:           # API에서 원하는 데이터 가져오기
         
             name = self.comb_box_2.currentText()
             self.ln_1.setText(self.current_region + " " +  name)
@@ -68,7 +68,7 @@ class MyApp(QWidget) :                      # 클래스 정의
             
             num = 0
             
-            for i in item:
+            for i in item:                          # 테이블에 데이터 입력
                 
                 date = i.find('datatime').get_text()
                 pm10 = i.find('pm10value').get_text()
@@ -95,7 +95,7 @@ class MyApp(QWidget) :                      # 클래스 정의
     
         layout = QVBoxLayout()              # 상자 배치관리자(최상위)
         
-        area_1 = QHBoxLayout()
+        area_1 = QHBoxLayout()              # 레이아웃 설정
         area_2 = QVBoxLayout()
         area_3 = QHBoxLayout()
         area_4 = QVBoxLayout()
@@ -105,8 +105,8 @@ class MyApp(QWidget) :                      # 클래스 정의
         layout.addLayout(area_3)
         layout.addLayout(area_4)
         
-        self.ln_1 = QLineEdit()
-        
+        self.ln_1 = QLineEdit()                     # 텍스트 라인 상자 설정
+                                                    # 첫번째 콤보 상자 리스트 설정
         self.comb_lst_1 = ['지역선택', '서울', '부산', '대구', '인천', '광주', '대전',
                            '울산', '경기', '강원', '충북', '충남', '전북', '전남',
                            '경북', '경남', '제주', '세종']
@@ -119,17 +119,16 @@ class MyApp(QWidget) :                      # 클래스 정의
         area_1.addWidget(self.ln_1)
         area_1.addWidget(self.comb_box_1)
         area_1.addWidget(self.comb_box_2)
-        
+                                                    # 콤보상자 변화 있을 시 함수 실행
         self.comb_box_1.currentTextChanged.connect(self.box_1_select)
         self.comb_box_2.currentTextChanged.connect(self.box_2_select)
         
-        self.tbl_2 = QTableWidget(20, 5)
+        self.tbl_2 = QTableWidget(20, 5)            # 테이블 설정
         self.col_head = ['Date', 'PM10', 'PM25', 'O3', 'CO']
         self.tbl_2.setHorizontalHeaderLabels(self.col_head)
         self.tbl_2.setColumnWidth(0, 154)
         
         area_2.addWidget(self.tbl_2)
-        
         
         self.setLayout(layout)
         self.setWindowTitle('MyWindow')     # 윈도우 제목
