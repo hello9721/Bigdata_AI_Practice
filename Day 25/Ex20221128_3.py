@@ -10,8 +10,6 @@ import requests as req
 # import urllib.parse as pars
 import bs4 as bs
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
 class MyApp(QWidget) :                      # 클래스 정의
@@ -22,17 +20,6 @@ class MyApp(QWidget) :                      # 클래스 정의
         
         super().__init__()                  # 부모클래스 생성자 호출(가장 위쪽 코딩)
         self.initUI()
-        
-    def update_check(self) :
-        
-        self.df_date = []  # dataTime
-        self.df_hour = []
-        self.df_pm10 = []  # pm10
-        self.df_pm25 = []  #pm25
-        self.df_o3 = []  # o3
-        self.df_co = []  # co
-        
-        self.box_1_select()
         
     def box_1_select(self):                 # 첫번째 콤보상자의 현재 상태가 바뀔때
         
@@ -72,19 +59,12 @@ class MyApp(QWidget) :                      # 클래스 정의
             self.tbl_2.clear()
             self.tbl_2.setHorizontalHeaderLabels(self.col_head)
             
-            url = f'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey={self.key}&returnType=xml&numOfRows=10&pageNo=1&stationName={name}&dataTerm=DAILY&ver=1.0'
+            url = f'https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey={self.key}&returnType=xml&numOfRows=20&pageNo=1&stationName={name}&dataTerm=DAILY&ver=1.0'
             
             result = req.get(url, verify=False)
             soup = bs.BeautifulSoup(result.text, 'lxml')
             
             item = soup.find_all('item')
-            
-            self.df_date = []  # dataTime
-            self.df_hour = []
-            self.df_pm10 = []  # pm10
-            self.df_pm25 = []  #pm25
-            self.df_o3 = []  # o3
-            self.df_co = []  # co
             
             num = 0
             
@@ -108,98 +88,22 @@ class MyApp(QWidget) :                      # 클래스 정의
                 self.tbl_2.item(num, 3).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
                 self.tbl_2.item(num, 4).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
                 
-                date = date.split(" ")[1]
-                hour = date.split(":")[0]
-                if pm10 == "-": pm10 = 0
-                if pm25 == "-": pm25 = 0
-                if o3 == "-": o3 = 0
-                if co == "-": co =0
-                 
-                self.df_date.append(date)
-                self.df_hour.append(hour)
-                self.df_pm10.append(float(pm10))
-                self.df_pm25.append(float(pm25))
-                self.df_o3.append(float(o3))
-                self.df_co.append(float(co))
                 
                 num += 1
-                
-    def radio_check(self) :
-        
-        if self.rdo_3_1.isChecked() : self.graph_1()
-        elif self.rdo_3_2.isChecked() : self.graph_2()
-        else : self.graph_3()
-        
-            
-    def graph_1(self):
-        
-        self.fig.clear()  # 그래프 영역 초기화
-        
-        ax = self.fig.add_subplot(111)
-        ax.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax.plot(self.df_date, self.df_pm10, 'r--', label='PM10')
-        ax.plot(self.df_date, self.df_pm25, 'b-.', label='PM25')
-        ax.legend()
-        
-        self.canvas.draw()
-        
-    def graph_2(self) :
-        
-        self.fig.clear()
-        
-        ax_1 = self.fig.add_subplot(211)
-        ax_1.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_1.plot(self.df_date, self.df_pm10, 'r--')
-        
-        ax_2 = self.fig.add_subplot(212)
-        ax_2.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_2.plot(self.df_date, self.df_pm25)
-        
-        self.canvas.draw()
-        
-    def graph_3(self) :
-        
-        self.fig.clear()
-        
-        ax_1 = self.fig.add_subplot(221)
-        ax_1.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_1.plot(self.df_hour, self.df_pm10, 'r--')
-        
-        ax_2 = self.fig.add_subplot(222)
-        ax_2.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_2.plot(self.df_hour, self.df_pm25)
-        
-        ax_3 = self.fig.add_subplot(223)
-        ax_3.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_3.plot(self.df_hour, self.df_o3)
-        
-        ax_4 = self.fig.add_subplot(224)
-        ax_4.clear() # 그래프 영역 초기화(subplot 각각 필요)
-        ax_4.plot(self.df_hour, self.df_co)
-        
-        self.canvas.draw()
         
     def initUI(self) :                      # 윈도우 환경 구성
     
-        layout = QHBoxLayout()              # 상자 배치관리자(최상위)
+        layout = QVBoxLayout()              # 상자 배치관리자(최상위)
         
-        area_left = QVBoxLayout()
-        area_right = QVBoxLayout()
         area_1 = QHBoxLayout()              # 레이아웃 설정
         area_2 = QVBoxLayout()
         area_3 = QHBoxLayout()
         area_4 = QVBoxLayout()
         
-        layout.addLayout(area_left)
-        layout.addLayout(area_right)
-        area_left.addLayout(area_1)
-        area_left.addLayout(area_2)
-        area_right.addLayout(area_3)
-        area_right.addLayout(area_4)
-        
-        self.timer = QTimer(self)
-        self.timer.start(60000)  # 60초간격 아래 실행
-        self.timer.timeout.connect(self.update_check)
+        layout.addLayout(area_1)
+        layout.addLayout(area_2)
+        layout.addLayout(area_3)
+        layout.addLayout(area_4)
         
         self.ln_1 = QLineEdit()                     # 텍스트 라인 상자 설정
                                                     # 첫번째 콤보 상자 리스트 설정
@@ -215,40 +119,20 @@ class MyApp(QWidget) :                      # 클래스 정의
         area_1.addWidget(self.ln_1)
         area_1.addWidget(self.comb_box_1)
         area_1.addWidget(self.comb_box_2)
-        
                                                     # 콤보상자 변화 있을 시 함수 실행
         self.comb_box_1.currentTextChanged.connect(self.box_1_select)
         self.comb_box_2.currentTextChanged.connect(self.box_2_select)
         
-        self.tbl_2 = QTableWidget(10, 5)            # 테이블 설정
+        self.tbl_2 = QTableWidget(20, 5)            # 테이블 설정
         self.col_head = ['Date', 'PM10', 'PM25', 'O3', 'CO']
         self.tbl_2.setHorizontalHeaderLabels(self.col_head)
         self.tbl_2.setColumnWidth(0, 154)
-        # self.tbl_2.setGeometry(QRect(10, 70, 600, 606))
         
         area_2.addWidget(self.tbl_2)
         
-        self.rdo_3_1 = QRadioButton('GraphType 01')
-        self.rdo_3_2 = QRadioButton('GraphType 02')
-        self.rdo_3_3 = QRadioButton('GraphType 03')
-        
-        self.rdo_3_1.clicked.connect(self.radio_check)
-        self.rdo_3_2.clicked.connect(self.radio_check)
-        self.rdo_3_3.clicked.connect(self.radio_check)
-        
-        area_3.addWidget(self.rdo_3_1)
-        area_3.addWidget(self.rdo_3_2)
-        area_3.addWidget(self.rdo_3_3)
-        
-        self.fig = plt.Figure()  
-        self.canvas = FigureCanvas(self.fig)
-        
-        area_4.addWidget(self.canvas)
-        
-        
         self.setLayout(layout)
-        self.setWindowTitle('AirCondition')     # 윈도우 제목
-        self.setGeometry(10, 30, 1045, 376)  # 좌상단좌표, 너비, 높이
+        self.setWindowTitle('MyWindow')     # 윈도우 제목
+        self.setGeometry(10, 30, 600, 676)  # 좌상단좌표, 너비, 높이
         self.show()                         # 윈도우 보이기
         
     
