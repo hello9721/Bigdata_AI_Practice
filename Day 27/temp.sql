@@ -1,0 +1,19 @@
+CREATE TABLE TEMP_DATA ( 
+	
+	REGDATE DATETIME NOT NULL,
+	TEMP1 FLOAT,
+	TEMP2 FLOAT,
+	TEMP3 FLOAT,
+	TEMP4 FLOAT,
+	TEMP5 FLOAT,
+	TEMP6 FLOAT
+	
+);
+
+DESC temp_data;
+
+SELECT * FROM temp_data;
+
+# WORK, temp_data, hana, bigdatar
+
+# 127.0.0.1
