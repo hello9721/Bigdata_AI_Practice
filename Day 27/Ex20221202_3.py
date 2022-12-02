@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import os
 # 숙제 - 한번 해보기
 
 # file dialog를 통해 파일이 무슨 꽃인지 종류를 예측하는 프로그램
@@ -8,6 +5,11 @@ import os
 # 불러온 이미지 표시
 # 텍스트 상자 (Print로 나온 결과들 표시)
 
+# 모델은 colab을 통해 실행된 Day 26 파일의 결과물 사용
+
+import matplotlib.pyplot as plt
+import numpy as np
+import os
 import PIL
 import tensorflow as tf
 
