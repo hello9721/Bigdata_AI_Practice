@@ -2,7 +2,6 @@ import sys
 import pymysql
 import numpy as np
 import pandas as pd
-import pyinstaller as pin
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
