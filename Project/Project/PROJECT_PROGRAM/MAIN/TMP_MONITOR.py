@@ -1,7 +1,7 @@
 import sys
 import pymysql as sql
 import numpy as np
-import pandas as pd
+from datetime import datetime as dt
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -11,10 +11,7 @@ import matplotlib.pyplot as pl
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 import tensorflow as tf
-import tensorflow.keras as keras
 from sklearn.preprocessing import MinMaxScaler as MMS
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import SimpleRNN, LSTM, GRU, Dropout, Dense
 
 from SubWindow import DateSelect
 from EventWindow import EventView
@@ -117,7 +114,11 @@ class MainWindow(QWidget) :                 # 클래스 정의
         # 테이블과 텍스트 위젯 구성
         
         self.tbl_tmp = QTableWidget(self.nrow, 7)
-        self.tbl_tmp.setColumnWidth(0, 192)
+
+        tbl_width = int((self.tbl_tmp.width()-190)/(self.tbl_tmp.columnCount()-1)*1.3)
+
+        self.tbl_tmp.setColumnWidth(0, 190)
+        for i in range(1, self.tbl_tmp.columnCount()): self.tbl_tmp.setColumnWidth(i, tbl_width)
         
         self.tbl_tmp.setStyleSheet("QTableWidget{\n"
                                         "selection-background-color: #EBB34A;\n"
@@ -144,7 +145,27 @@ class MainWindow(QWidget) :                 # 클래스 정의
         self.txt_log.setAcceptRichText(True)
         self.txt_log.setReadOnly(True)
 
-        self.txt_log.setStyleSheet("font-size : 12pt;" "color : rgba(0, 89, 253, 200);" "font-weight: 400;")
+        self.txt_log.setStyleSheet("QTextEdit {"
+                                        "font-size : 12pt;"
+                                        "color : rgba(0, 89, 253, 200);"
+                                        "font-weight: 400;"
+                                        "}"
+                                    "QScrollBar:vertical {\n"              
+                                    "    border: 1px solid #999999;\n"
+                                    "    background:white;\n"
+                                    "    width:10px;\n"
+                                    "    margin: 0px 0px 0px 0px;\n"
+                                        "}\n"
+                                    "QScrollBar::handle:vertical {\n"
+                                    "    background-color: #3059a7;\n"
+                                    "    height: 50px;\n"
+                                    "}\n"
+                                    "QScrollBar::add-line:vertical {\n"
+                                    "    height: 0px;\n"
+                                    "}\n"
+                                    "QScrollBar::sub-line:vertical {\n"
+                                    "    height: 0 px;\n"
+                                    "}")
 
         self.prb_loading = QProgressBar()
 
@@ -161,6 +182,10 @@ class MainWindow(QWidget) :                 # 클래스 정의
                                         "\n"
                                         "")
         
+        self.lbl_timer = QLabel("60")
+        
+        self.lbl_timer.setAlignment(Qt.AlignRight)
+        self.lbl_timer.setStyleSheet("font-weight: 700;" "font-size: 12px;")
         
         # 레이아웃에 추가
         
@@ -168,6 +193,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
         layout_tbl_log.addLayout(layout_log, 1)
 
         layout_log.addWidget(self.txt_log)
+        layout_log.addWidget(self.lbl_timer)
         layout_log.addWidget(self.prb_loading)
         
         # 메인 그래프 위젯 구성
@@ -212,26 +238,29 @@ class MainWindow(QWidget) :                 # 클래스 정의
         self.show()
         
         # 타이머 제어 추가
+
+        self.sec = 59
         
         self.timer = QTimer(self)            
-        self.timer.start(60000)
+        self.timer.start()
+        self.timer.setInterval(1000)
         self.timer.timeout.connect(self.timeout)
         
-        self.timeout()
-        
         self.btn_menu[0].setEnabled(False)
+
+        self.timeout()
         
         
     def btn_clicked(self):                          # 버튼 클릭 시
         
         if self.sender() == self.btn_menu[0]:
             
+            self.sec = 59
             self.timeout()            
-            if not self.timer.isActive(): self.timer.start(60000)
+            if not self.timer.isActive(): self.timer.start()
             
             self.txt_log.append("")
             self.txt_log.append("< ==== AUTO MODE ==== >")
-            self.txt_log.append("")
             
             self.search_mode = False
             
@@ -256,7 +285,9 @@ class MainWindow(QWidget) :                 # 클래스 정의
                 self.txt_log.append("")
                 self.txt_log.append("< ==== SEARCH MODE ==== >")
                 self.txt_log.append("")
+                self.txt_log.append("***")
                 self.txt_log.append(f"{self.date_one} ~ {self.date_two}")
+                self.txt_log.append("***")
                 self.txt_log.append("")
                 
                 self.btn_menu[0].setEnabled(False)
@@ -264,6 +295,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
 
                 self.search_mode = True
                 self.timer.stop()
+                self.lbl_timer.setText("-")
                 
             else:
                 
@@ -279,7 +311,9 @@ class MainWindow(QWidget) :                 # 클래스 정의
             self.btn_menu[2].setEnabled(False)
             
             self.search_mode = True
+            self.sec = 59
             self.timeout()
+            self.lbl_timer.setText("-")
         
         elif self.sender() == self.btn_menu[3]:
             
@@ -391,8 +425,8 @@ class MainWindow(QWidget) :                 # 클래스 정의
             
             if i == 6: self.prb_loading.setValue(100)
         
-    def model_pred(self, n):
-        
+    def model_pred(self, n):                                # 미리 훈련된 모델을 이용한 예측치 추출 및 MAPE 추출
+
         df = [i[n] for i in self.df[0:60]]
         df = np.array(df)
         df = df.reshape(-1, 1)
@@ -404,16 +438,29 @@ class MainWindow(QWidget) :                 # 클래스 정의
         s_df = s_tool.fit_transform(df)
         
         xte = self.get_data_x(s_df, 0, s_df.shape[0] - 1, 10)
-        yte = self.get_data_y(s_df, 0, s_df.shape[0] - 1, 10) 
-        lstm_model = tf.keras.models.load_model(f'Desktop/lstm_tmp{n}.h5')
+        lstm_model = tf.keras.models.load_model(f'lstm_tmp{n}.h5')
         
         self.pred_tmp[n - 1] = lstm_model.predict(xte)
         self.pred_tmp[n - 1] = s_tool.inverse_transform(self.pred_tmp[n - 1])
         
         mape = np.mean(np.abs(t_df[10: ] - self.pred_tmp[n - 1]) / t_df[10: ]) * 100
-        mape = f'TMP{n} MAPE : {mape:.3f}%'
+        mape_txt = f'TMP{n} MAPE : {mape:.3f}%'
         
-        self.txt_log.append(mape)
+        self.txt_log.append(mape_txt)
+
+        if n == 1:
+            
+            self.today = dt.now().strftime("%Y-%m-%d %H:%M:%S")
+            query = f"INSERT INTO TMP_EVT_DATA (S_TIME, S_TMP1_MAPE) VALUES ('{self.today}', {mape:0.3f})"
+
+        else : query = f"UPDATE TMP_EVT_DATA SET S_TMP{n}_MAPE = {mape:0.3f} WHERE S_TIME = '{self.today}'"
+
+        con = sql.connect(host = "127.0.0.1", user = "root", password = "bigdatar", db = "bigdata_tmp", charset = "utf8")
+        cmd = con.cursor()
+        cmd.execute(query)
+        cmd.fetchall()
+        con.commit()
+        con.close()
         
     def tbl_setting(self):                          # 데이터를 테이블에 표시
     
@@ -471,8 +518,6 @@ class MainWindow(QWidget) :                 # 클래스 정의
         
         self.fig_tmp[n].set_facecolor("#f8f8f8")
         
-        df = [i[n + 1] for i in self.df]
-        
         ax.plot(self.t_tmp[n][10: , 0], label = f'TMP{n+1}', color = '#EBB34A')
         ax.plot(self.pred_tmp[n], label = 'PRED', color = '#5E8EE9')
         
@@ -482,15 +527,26 @@ class MainWindow(QWidget) :                 # 클래스 정의
         
         self.canv[n].draw()
         
-    def timeout(self):
+    def timeout(self):                              # 60초가 될때 함수들 실행 및 1초마다 UI의 타이머 숫자 업데이트
+
+        self.sec += 1
         
-        self.data_loading()
-        self.data_processing()
-        self.tbl_setting()
-        self.main_graph()
+        if self.sec != 60: self.lbl_timer.setText(f"{60 - self.sec}")
+
+        else:
+
+            self.lbl_timer.setText("0")
+
+            self.data_loading()
+            self.data_processing()
+            self.tbl_setting()
+            self.main_graph()
         
-        for i in range(6): self.sub_graph(i)
-        
+            for i in range(6): self.sub_graph(i)
+            
+            self.lbl_timer.setText("60")
+            self.sec = 0
+
         
 if __name__ == '__main__' :
     

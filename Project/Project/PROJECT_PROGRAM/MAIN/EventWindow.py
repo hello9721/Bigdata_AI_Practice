@@ -31,8 +31,6 @@ class EventView(QDialog):
         self.lbl_date = QLabel("!! SELECT DATE !!")                 # 선택한 날짜가 표시되는 라벨 기본 값
         self.lbl_date.setAlignment(Qt.AlignCenter)
         
-        self.prb_loading = QProgressBar()                           # 데이터 로딩 상태를 표시하는 상태바
-        
         # 레이아웃 설정
         
         layout_main = QHBoxLayout()                                 # 최상위 레이아웃
@@ -47,16 +45,20 @@ class EventView(QDialog):
         layout_btn = QVBoxLayout()                                  # 버튼
         layout_log = QVBoxLayout()                                  # 로그
 
+        # 테이블 레이아웃
+
+        layout_tbl = QVBoxLayout()
+
         # 레이아웃에 추가
         
-        layout_main.addLayout(layout_left, 5)
+        layout_main.addLayout(layout_left, 4)
         layout_main.addLayout(layout_right, 1)
+        layout_main.addLayout(layout_tbl, 3)
         
         layout_left.addLayout(layout_date, 1)
         layout_left.addLayout(layout_graph_main, 1.5)
         layout_left.addLayout(layout_graph_sub, 2)
         
-        layout_right.addWidget(self.prb_loading)
         layout_right.addLayout(layout_btn)
         layout_right.addWidget(self.lbl_date)
         layout_right.addLayout(layout_log)
@@ -68,9 +70,12 @@ class EventView(QDialog):
 
         self.date_one.setStyleSheet("selection-background-color: #5E8EE9")
         self.date_two.setStyleSheet("selection-background-color: #5E8EE9")
+
+        self.date_one.setVerticalHeaderFormat(0)
+        self.date_two.setVerticalHeaderFormat(0)
         
         self.date_one.setDateRange(QDate(2022, 12, 1), QDate.currentDate())
-        self.date_two.setDateRange(QDate(2022, 12, 1), QDate.currentDate())
+        self.date_two.setEnabled(False)
                                                                     # 달력 선택 가능 범위 설정        
         
         self.btn_search = QPushButton("SEARCH")                     # SEARCH 버튼
@@ -124,23 +129,59 @@ class EventView(QDialog):
                                                     "background-color: #3059a7;\n"
                                                     "}")
 
-        self.txt_log.setStyleSheet("color : rgba(0, 89, 253, 200);" "font-weight: 400;")
+        self.txt_log.setStyleSheet("QTextEdit {"
+                                        "font-size : 10pt;"
+                                        "color : rgba(0, 89, 253, 200);"
+                                        "font-weight: 400;"
+                                        "}"
+                                    "QScrollBar:vertical {\n"              
+                                    "    border: 1px solid #999999;\n"
+                                    "    background:white;\n"
+                                    "    width:10px;\n"
+                                    "    margin: 0px 0px 0px 0px;\n"
+                                        "}\n"
+                                    "QScrollBar::handle:vertical {\n"
+                                    "    background-color: #3059a7;\n"
+                                    "    height: 50px;\n"
+                                    "}\n"
+                                    "QScrollBar::add-line:vertical {\n"
+                                    "    height: 0px;\n"
+                                    "}\n"
+                                    "QScrollBar::sub-line:vertical {\n"
+                                    "    height: 0 px;\n"
+                                    "}")
 
-        self.prb_loading.setStyleSheet("QProgressBar{\n"
-                                        "    background-color: white;\n"
-                                        "    color: black;\n"
-                                        "    font-weight: 800;\n"
-                                        "    text-align: center;\n"
+        self.tbl_evt = QTableWidget(100, 7)
+        tbl_width = int((self.tbl_evt.width()-165)/(self.tbl_evt.columnCount()-1)*0.7)
+
+        self.tbl_evt.setColumnWidth(0, 165)
+        for i in range(1, self.tbl_evt.columnCount()): self.tbl_evt.setColumnWidth(i, tbl_width)
+
+        self.tbl_evt.setStyleSheet("QTableWidget{\n"
+                                        "selection-background-color: #5E8EE9;\n"
+                                        "font-size : 12pt;\n"
                                         "}\n"
-                                        "QProgressBar::chunk{\n"
-                                        "    border: solid 2px rgba(20, 20, 20, 255);\n"
-                                        "    background-color: qlineargradient(spread:pad, x1:0, y1:0.511364, x2:1, y2:0.523, stop:0 rgba(236, 179, 73, 255), stop:1 rgba(92, 142, 235, 255));\n"
+                                   "QScrollBar:vertical {\n"              
+                                    "    border: 1px solid #999999;\n"
+                                    "    background:white;\n"
+                                    "    width:10px;\n"
+                                    "    margin: 0px 0px 0px 0px;\n"
                                         "}\n"
-                                        "\n"
-                                        "")
+                                    "QScrollBar::handle:vertical {\n"
+                                    "    background-color: #3059a7;\n"
+                                    "    height: 50px;\n"
+                                    "}\n"
+                                    "QScrollBar::add-line:vertical {\n"
+                                    "    height: 0px;\n"
+                                    "}\n"
+                                    "QScrollBar::sub-line:vertical {\n"
+                                    "    height: 0 px;\n"
+                                    "}")
         
         # 레이아웃에 위젯 추가
         
+        layout_tbl.addWidget(self.tbl_evt)
+
         layout_date.addWidget(self.date_one)
         layout_date.addWidget(self.date_two)
         
@@ -173,10 +214,10 @@ class EventView(QDialog):
         
         self.setLayout(layout_main)                                 # 레이아웃 셋팅
         self.setWindowTitle('Event Viewer')                         # 창 이름
-        self.setGeometry(0, 30, 1200, 900)                          # 창 크기
+        self.setGeometry(0, 30, 1500, 900)                          # 창 크기
         self.show()                                                 # 창 표시
         
-    def search(self):
+    def search(self):                                               # SEARCH 클릭시 이벤트 테이블에서 MAPE 데이터를 불러와서 테이블 그래프로 표시
 
         if (self.Qdate_one == self.Qdate_two == QDate.currentDate()): self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
         
@@ -184,13 +225,27 @@ class EventView(QDialog):
             
             self.Qdate_one, self.Qdate_two = self.Qdate_two, self.Qdate_one
             self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
+
+        self.txt_log.append("")
+        self.txt_log.append("***")
+        self.txt_log.append(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
+        self.txt_log.append("***")
             
         self.data_loading()
-        self.data_processing()
-        self.main_graph()
         
-        for i in range(6): self.sub_graph(i)
+        if self.nrow != 0:
         
+            self.data_processing()
+            self.tbl_setting()
+            self.main_graph()
+            
+            for i in range(6): self.sub_graph(i)
+
+        else:
+            
+            self.txt_log.append("")
+            self.txt_log.append("SEARCH RESULT : NONE")
+
     def get_data_x(self, item, start, to, size):    # 데이터를 원하는 형태로 반환
     
         lst = []
@@ -219,11 +274,13 @@ class EventView(QDialog):
         con = sql.connect(host = "127.0.0.1", user = "root", password = "bigdatar", db = "bigdata_tmp", charset = "utf8")
         cmd = con.cursor()
             
-        query = f"SELECT * FROM TMP_DATA WHERE DATE(S_TIME) >= '{self.Qdate_one.toString('yyyy-MM-dd')}' AND DATE(S_TIME) <= '{self.Qdate_two.toString('yyyy-MM-dd')}' ORDER BY S_TIME DESC;"
+        query = f"SELECT * FROM TMP_EVT_DATA WHERE DATE(S_TIME) >= '{self.Qdate_one.toString('yyyy-MM-dd')}' AND DATE(S_TIME) <= '{self.Qdate_two.toString('yyyy-MM-dd')}' ORDER BY S_TIME DESC;"
         
         cmd.execute(query)
         self.data = cmd.fetchall()
         self.nrow = cmd.rowcount
+
+        self.tbl_evt.setRowCount(self.nrow)
         
         con.close()
     
@@ -242,12 +299,12 @@ class EventView(QDialog):
         
         # 로그에 표시할 데이터를 문자열로
         
-        log_tmp1 = 'TMP1 : %f' % (self.df[0][1])
-        log_tmp2 = 'TMP2 : %f' % (self.df[0][2])
-        log_tmp3 = 'TMP3 : %f' % (self.df[0][3])
-        log_tmp4 = 'TMP4 : %f' % (self.df[0][4])
-        log_tmp5 = 'TMP5 : %f' % (self.df[0][5])
-        log_tmp6 = 'TMP6 : %f' % (self.df[0][6])
+        log_tmp1 = f'TMP1 MAPE : {self.df[0][1]:.3f} %'
+        log_tmp2 = f'TMP2 MAPE : {self.df[0][2]:.3f} %'
+        log_tmp3 = f'TMP3 MAPE : {self.df[0][3]:.3f} %'
+        log_tmp4 = f'TMP4 MAPE : {self.df[0][4]:.3f} %'
+        log_tmp5 = f'TMP5 MAPE : {self.df[0][5]:.3f} %'
+        log_tmp6 = f'TMP6 MAPE : {self.df[0][6]:.3f} %'
         
         # 로그 창에 추가 표시
         
@@ -262,43 +319,22 @@ class EventView(QDialog):
         self.txt_log.append(log_tmp6)
         self.txt_log.append("")
         
-        # 미리 훈련된 모델을 통한 예측치 추출
         
-        self.pred_tmp = [0, 0, 0, 0, 0, 0]
-        self.t_tmp = [0, 0, 0, 0, 0, 0]
+    def tbl_setting(self):                          # 데이터를 테이블에 표시
+    
+        self.tbl_evt.clear()
         
-        self.prb_loading.setValue(0)
+        col_name = ['Date', 'TMP1','TMP2','TMP3','TMP4','TMP5','TMP6']
         
-        for i in range(1, 7):
-            
-            self.model_pred(i)
-            self.prb_loading.setValue(round(i/6 * 100,))
-            
-            if i == 6: self.prb_loading.setValue(100)
+        self.tbl_evt.setHorizontalHeaderLabels(col_name)
         
-    def model_pred(self, n):
-        
-        df = [i[n] for i in self.df[0:60]]
-        df = np.array(df)
-        df = df.reshape(-1, 1)
-        
-        t_df = df[0: , : ]
-        self.t_tmp[n - 1] = t_df
-        
-        s_tool = MMS(feature_range = (0, 1))
-        s_df = s_tool.fit_transform(df)
-        
-        xte = self.get_data_x(s_df, 0, s_df.shape[0] - 1, 10)
-        yte = self.get_data_y(s_df, 0, s_df.shape[0] - 1, 10) 
-        lstm_model = tf.keras.models.load_model(f'Desktop/lstm_tmp{n}.h5')
-        
-        self.pred_tmp[n - 1] = lstm_model.predict(xte)
-        self.pred_tmp[n - 1] = s_tool.inverse_transform(self.pred_tmp[n - 1])
-        
-        mape = np.mean(np.abs(t_df[10: ] - self.pred_tmp[n - 1]) / t_df[10: ]) * 100
-        mape = f'TMP{n} MAPE : {mape:.3f}%'
-        
-        self.txt_log.append(mape)
+        for i in range(self.nrow):
+            for j in range(7):
+                
+                item = QTableWidgetItem(str(self.df[i][j]))
+                item.setTextAlignment(Qt.AlignCenter)
+                
+                self.tbl_evt.setItem(i, j, item)
         
     def main_graph(self):                           # 메인 그래프 그리기
         
@@ -313,60 +349,62 @@ class EventView(QDialog):
         tmp4 = [i[4] for i in self.df]
         tmp5 = [i[5] for i in self.df]
         tmp6 = [i[6] for i in self.df]
+        time = [i[0] for i in self.df]
 
-        ax.plot(tmp1, label='TMP1', color = '#939CAE')
-        ax.plot(tmp2, label='TMP2', color = '#EBB34A')
-        ax.plot(tmp3, label='TMP3', color = '#CFAC6A')
-        ax.plot(tmp4, label='TMP4', color = '#B2A48B')
-        ax.plot(tmp5, label='TMP5', color = '#5E8EE9')
-        ax.plot(tmp6, label='TMP6', color = '#7D96C6')
-
-        ax.set_ylim(20, 37)
+        ax.plot(time, tmp1, label='TMP1', color = '#EBB34A')
+        ax.plot(time, tmp2, label='TMP2', color = '#5E8EE9')
+        ax.plot(time, tmp3, label='TMP3', color = '#939CAE')
+        ax.plot(time, tmp4, label='TMP4', color = '#CFAC6A')
+        ax.plot(time, tmp5, label='TMP5', color = '#7D96C6')
+        ax.plot(time, tmp6, label='TMP6', color = '#B2A48B')
+        
+        ax.set_xticks([], labels=None)
+        ax.set_ylim(0, 1.2)
         ax.tick_params(axis = 'both', labelsize = 6.5)
 
         ax.legend(fontsize = 8, ncols = 6, loc = 'upper center')
         
         self.canv_main.draw()
         
-    def sub_graph(self, n):                         # 예측치와 관측치 그리기
+    def sub_graph(self, n):                         # 장비별 MAPE 그래프 그리기
         
         self.fig_tmp[n].clear()
         
+        tmp = [i[n+1] for i in self.df]
+        time = [i[0] for i in self.df]
+
         ax = self.fig_tmp[n].add_subplot(111)
         ax.clear()
         
-        df = [i[n + 1] for i in self.df]
+        ax.plot(time, tmp, color = '#5E8EE9')
         
-        ax.plot(self.t_tmp[n][10: , 0], label = f'TMP{n+1}', color = '#EBB34A')
-        ax.plot(self.pred_tmp[n], label = 'PRED', color = '#5E8EE9')
-        
-        ax.legend(fontsize = 8)
-        ax.set_title(f'TMP{n+1}', fontsize = 8)
+        ax.set_title(f'TMP{n+1} MAPE', fontsize = 8)
+        ax.set_xticks([], labels=None)
 
         ax.tick_params(axis = 'both', labelsize = 6.5)
         
         self.canv[n].draw()
     
-    def btn_reject(self):
+    def btn_reject(self):                           # CLOSE 클릭시 아무런 데이터의 전달없이 창 종료
         
         self.reject()
         
-    def date_selected(self):
+    def date_selected(self):                            # 달력 선택 시
         
-        if self.sender() == self.date_one:
+        if self.sender() == self.date_one:              # 첫번째 달력 선택시 두번째 달력 활성화 및 5일 길이 제한
             
             self.Qdate_one = self.date_one.selectedDate()
-            
-            if self.Qdate_two == QDate.currentDate(): self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {QDate.currentDate().toString('yyyy-MM-dd')}")
-            else: self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
-                
-            
-        elif self.sender() == self.date_two:
-            
-            self.Qdate_two = self.date_two.selectedDate()
-            
-            if self.Qdate_one == QDate.currentDate(): self.lbl_date.setText(f"{QDate.currentDate().toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
-            else: self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
+            self.Qdate_two = self.date_one.selectedDate()
+
+            self.date_two.setEnabled(True)
+            self.date_two.setDateRange(self.Qdate_one, self.Qdate_one.addDays(5))
+            self.date_two.setSelectedDate(self.Qdate_one)
+
+            if self.Qdate_one.addDays(5) > QDate.currentDate(): self.date_two.setDateRange(self.Qdate_one, QDate.currentDate())
+
+        if self.sender() == self.date_two: self.Qdate_two = self.date_two.selectedDate()
+
+        self.lbl_date.setText(f"{self.Qdate_one.toString('yyyy-MM-dd')} ~ {self.Qdate_two.toString('yyyy-MM-dd')}")
         
     def showModal(self):
         

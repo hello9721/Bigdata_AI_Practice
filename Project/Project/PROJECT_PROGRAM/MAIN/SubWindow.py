@@ -1,14 +1,6 @@
-import sys
-import pymysql as sql
-import numpy as np
-import pandas as pd
-
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-
-import matplotlib.pyplot as pl
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class DateSelect(QDialog):
     
@@ -48,6 +40,9 @@ class DateSelect(QDialog):
 
         self.date_one.setStyleSheet("selection-background-color: #EBB34A")
         self.date_two.setStyleSheet("selection-background-color: #EBB34A")
+
+        self.date_one.setVerticalHeaderFormat(0)
+        self.date_two.setVerticalHeaderFormat(0)
         
         self.lbl_one = QLabel("")
         self.lbl_two = QLabel("")
@@ -124,7 +119,7 @@ class DateSelect(QDialog):
         self.setGeometry(0, 30, 700, 300)
         self.show()
         
-    def date_selected(self):
+    def date_selected(self):                    # 달력 날짜 선택시
         
         if self.sender() == self.date_one:
             
