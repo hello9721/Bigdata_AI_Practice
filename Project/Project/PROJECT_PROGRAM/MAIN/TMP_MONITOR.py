@@ -1,6 +1,6 @@
 import sys
-import pymysql as sql
 import numpy as np
+import pymysql as sql
 from datetime import datetime as dt
 
 from PyQt5.QtGui import *
@@ -8,13 +8,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 import matplotlib.pyplot as pl
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as fic
 
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler as MMS
 
-from SubWindow import DateSelect
 from EventWindow import EventView
+from SubWindow import DateSelect, Correlation
 
 class MainWindow(QWidget) :                 # 클래스 정의
 
@@ -75,7 +75,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
         # 레이아웃에 추가
         # 버튼 이벤트 추가
         
-        btn_title = [["AUTO UPDATE", "DATE SELECT", "SEARCH", "EVENT"], ["REGRESSION", "SETTING", "MODEL SETTING", "EXPORT"]]
+        btn_title = [["AUTO UPDATE", "DATE SELECT", "SEARCH", "EVENT"], ["REGRESSION", "CORRELATION", "SETTING", "MODEL SETTING"]]
         
         self.btn_menu = []
         cnt = 0
@@ -199,7 +199,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
         # 메인 그래프 위젯 구성
         
         self.fig_main = pl.Figure(figsize = (5, 3))
-        self.canv_main = FigureCanvas(self.fig_main)
+        self.canv_main = fic(self.fig_main)
 
         self.fig_main.set_facecolor("#ececec")
         
@@ -210,14 +210,14 @@ class MainWindow(QWidget) :                 # 클래스 정의
         # 오른쪽 그래프 위젯 구성
         
         self.fig_tmp = [pl.Figure(figsize = (5, 3)) for i in range(6)]
-        self.canv = [FigureCanvas(self.fig_tmp[i]) for i in range(6)]
+        self.canv = [fic(self.fig_tmp[i]) for i in range(6)]
 
         for i in self.fig_tmp: i.set_facecolor("#ececec")
         
         #for i in range(6):
             
         #    self.fig_tmp[i] = pl.Figure(figsize = (5, 3))    
-        #    self.canv[i] = FigureCanvas(self.fig_tmp[i])
+        #    self.canv[i] = fic(self.fig_tmp[i])
         
         # 레이아웃에 추가
         
@@ -253,7 +253,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
         
     def btn_clicked(self):                          # 버튼 클릭 시
         
-        if self.sender() == self.btn_menu[0]:
+        if self.sender() == self.btn_menu[0]:       # AUTO UPDATE
             
             self.sec = 59
             self.timeout()            
@@ -267,7 +267,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
             self.btn_menu[0].setEnabled(False)
             self.btn_menu[2].setEnabled(False)
                 
-        elif self.sender() == self.btn_menu[1]:
+        elif self.sender() == self.btn_menu[1]:     # DATE SELECT
             
             dialog_open = DateSelect()
             re = dialog_open.showModal()
@@ -303,7 +303,7 @@ class MainWindow(QWidget) :                 # 클래스 정의
                 self.btn_menu[2].setEnabled(False)
             
                 
-        elif self.sender() == self.btn_menu[2]:
+        elif self.sender() == self.btn_menu[2]:     # SEARCH
             
             self.timer.stop()
             
@@ -315,24 +315,25 @@ class MainWindow(QWidget) :                 # 클래스 정의
             self.timeout()
             self.lbl_timer.setText("-")
         
-        elif self.sender() == self.btn_menu[3]:
+        elif self.sender() == self.btn_menu[3]:     # EVENT
             
             dialog_open = EventView()
             re = dialog_open.showModal()
         
-        elif self.sender() == self.btn_menu[4]:
+        elif self.sender() == self.btn_menu[4]:     # REGRESSION
             
             pass
         
-        elif self.sender() == self.btn_menu[5]:
+        elif self.sender() == self.btn_menu[5]:     # CORRELATION
+            
+            dialog_open = Correlation()
+            re = dialog_open.showModal()
+        
+        elif self.sender() == self.btn_menu[6]:     # SETTING
             
             pass
         
-        elif self.sender() == self.btn_menu[6]:
-            
-            pass
-        
-        elif self.sender() == self.btn_menu[7]:
+        elif self.sender() == self.btn_menu[7]:     # MODEL SETTING
             
             pass
         

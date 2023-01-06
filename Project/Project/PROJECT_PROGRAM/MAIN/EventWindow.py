@@ -8,11 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 import matplotlib.pyplot as pl
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
-import tensorflow as tf
-import tensorflow.keras as keras
-from sklearn.preprocessing import MinMaxScaler as MMS
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as fic
 
 class EventView(QDialog):
     
@@ -82,10 +78,10 @@ class EventView(QDialog):
         self.btn_close = QPushButton("CLOSE")                       # CLOSE 버튼
         
         self.fig_main = pl.Figure(figsize = (4, 2))                 # 전체 그래프
-        self.canv_main = FigureCanvas(self.fig_main)
+        self.canv_main = fic(self.fig_main)
                                                                     # 개별 그래프 ( 리스트 형태 )
         self.fig_tmp = [pl.Figure(figsize = (4, 2)) for i in range(6)]
-        self.canv = [FigureCanvas(self.fig_tmp[i]) for i in range(6)]
+        self.canv = [fic(self.fig_tmp[i]) for i in range(6)]
         
         self.txt_log = QTextEdit("")                                # 로그
 
@@ -359,7 +355,7 @@ class EventView(QDialog):
         ax.plot(time, tmp6, label='TMP6', color = '#B2A48B')
         
         ax.set_xticks([], labels=None)
-        ax.set_ylim(0, 1.2)
+        ax.set_ylim(0, max(max(tmp1), max(tmp2), max(tmp3), max(tmp4), max(tmp5), max(tmp6)) * 1.2)
         ax.tick_params(axis = 'both', labelsize = 6.5)
 
         ax.legend(fontsize = 8, ncols = 6, loc = 'upper center')
